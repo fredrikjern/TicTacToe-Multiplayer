@@ -1,0 +1,54 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 16px;
+
+
+}
+
+main {
+    margin: auto;
+    padding-top: 2rem;
+    .game-container {
+        margin: auto;
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        background: gray;
+        width: 92vw;
+        height: 92vw;
+        
+        border: 1px solid black;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        
+        .join {
+            flex-direction: column;
+
+        }
+        & > div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6rem;
+            color: rgb(188, 191, 194);
+            min-width:100px;
+            min-height: 100px;
+            max-width: 400px;
+            max-height: 400px;
+            aspect-ratio: 1/1;
+            border: 1px solid black;
+            &.checked{
+                background: black;
+            }
+            &:hover{
+                background: rgb(109, 108, 108);
+            }
+        }
+
+    }
+}
+

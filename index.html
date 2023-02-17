@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic tac toe</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <h1>Tic tac toe</h1>
+        <p>Start playing by choosing a player</p>
+        <label for="player1">Player 1
+            <input type="radio" name="player" id="player1" value=1 checked>
+
+        </label>
+        <label for="player2">Player 2
+
+            <input type="radio" name="player" id="player2" value=2>
+        </label>
+    </header>
+    <main>
+        <section class="game-container">
+            <div class="start">
+                <p>Start new game</p>
+            </div>
+            <div class="join">
+                <p>
+Join a game with code:
+                </p>
+               <form action="submit">
+                <input type="text">
+               </form>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <button class="timeButton">Log time</button>
+    </footer>
+
+</body>
+
+</html>

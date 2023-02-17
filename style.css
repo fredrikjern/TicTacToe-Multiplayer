@@ -1,0 +1,47 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 16px;
+}
+
+main {
+  margin: auto;
+  padding-top: 2rem;
+}
+main .game-container {
+  margin: auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background: gray;
+  width: 92vw;
+  height: 92vw;
+  border: 1px solid black;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+main .game-container .join {
+  flex-direction: column;
+}
+main .game-container > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 6rem;
+  color: rgb(188, 191, 194);
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 400px;
+  max-height: 400px;
+  aspect-ratio: 1/1;
+  border: 1px solid black;
+}
+main .game-container > div.checked {
+  background: black;
+}
+main .game-container > div:hover {
+  background: rgb(109, 108, 108);
+}/*# sourceMappingURL=style.css.map */
