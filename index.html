@@ -12,16 +12,9 @@
 
 <body>
     <header>
-        <h1>Tic tac toe</h1>
-        <p>Start playing by choosing a player</p>
-        <label for="player1">Player 1
-            <input type="radio" name="player" id="player1" value=1 checked>
-
-        </label>
-        <label for="player2">Player 2
-
-            <input type="radio" name="player" id="player2" value=2>
-        </label>
+        <h1>Tic tac toe  GameID:</h1>
+        
+        <h2 class="showID">ID</h2>
     </header>
     <main>
         <section class="game-container">
@@ -32,14 +25,20 @@
                 <p>
 Join a game with code:
                 </p>
-               <form action="submit">
-                <input type="text">
+               <form action="submit" class="join-form">
+                <input type="text" class="join-input" required>
+                <button>Join</button>
                </form>
             </div>
         </section>
     </main>
     <footer>
-        <button class="timeButton">Log time</button>
+        <form class="delete-form">
+            delete ID
+            <input type="text" class="delete-input">
+            <button type="submit">Delete</button>
+        </form>
+        <button class="delete-current-game">Delet current game</button>
     </footer>
 
 </body>

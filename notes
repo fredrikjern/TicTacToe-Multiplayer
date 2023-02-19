@@ -1,0 +1,53 @@
+let data = {
+  id: "201002fkfk",
+  listname: "GameBoard-1",
+  player1turn: true,
+  player2: false,
+  itemlist: [
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: true,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: false,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: true,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: true,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: true,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: false,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: true,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: true,
+    },
+    {
+      _id: "63e386e46828aa94aff34e35",
+      checked: false,
+      checkedByPlayer1: true,
+    },
+  ],
+};
