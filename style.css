@@ -5,6 +5,12 @@
   font-size: 16px;
 }
 
+header {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 8px;
+}
+
 main {
   margin: auto;
   padding-top: 2rem;
