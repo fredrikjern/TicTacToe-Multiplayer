@@ -1,4 +1,4 @@
-const UPDATE_INTERVAL = 5;
+const UPDATE_INTERVAL = 2;
 const GAME_LIMIT = 120;
 const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
 let deleteCurrentGame = document.querySelector(".delete-current-game");
@@ -64,51 +64,48 @@ async function renderBoard(game) {
       div.innerHTML = item.checkedByPlayer1 ? "x" : "o";
       div.classList.add("checked");
     } else {
-      div.innerHTML = ` ${index}`;
+      div.innerHTML = ` ${index}`; //Ta bort senare
       div.addEventListener("click", async (event) => {
         event.preventDefault();
-        console.log("square-klick " + index);
-        checkSquare(game, index);
-        changeTurn(gameID, player1turn);
+        console.log("square-klick: " + index);
+        await checkSquare(game, index);
+        await changeTurn(gameID, player1turn);
       });
     }
     gameContainer.appendChild(div);
   });
 }
 /**
- * 
- * @param {* Full game list from API} game 
- * @param {* Index of the square that should be checked} index 
+ *
+ * @param {* Full game list from API} game
+ * @param {* Index of the square that should be checked} index
  * @returns The new game array? A promise? Check
  */
 async function checkSquare(game, index) {
   try {
     let squareID = game.itemList[index]._id;
     console.log(squareID);
-    let checkedby = game.player1turn ? true : false;
-    gameID = game._id;
-    console.log(checkedby);
-    let res = await fetch(`${API_BASE}lists/${gameID}/items/${squareID}`, {
+    let res = await fetch(`${API_BASE}lists/${game._id}/items/${squareID}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         checked: true,
-        checkedByPlayer1: checkedby,
+        checkedByPlayer1: game.player1turn ? true : false,
       }),
     });
     let data = await res.json();
     console.log(data);
-    console.log("inne i checkswuare efter cnsl data");
+    console.log("Player1:" + game.player1turn);
     return data;
   } catch (error) {
     console.log(error);
   }
 }
 /**
- * @param {* The database ID} gameID 
- * @param {* Whose turn it is, changes to opposite} player1turn 
+ * @param {* The database ID} gameID
+ * @param {* Whose turn it is, changes to opposite} player1turn
  */
 async function changeTurn(gameID, player1turn) {
   try {
@@ -130,7 +127,7 @@ async function changeTurn(gameID, player1turn) {
 }
 /** Player 2 join
  * Sends a PUT to change player2: false -> true
- * @param {*} gameID 
+ * @param {*} gameID
  * @returns Promise?
  */
 async function player2join(gameID) {
@@ -152,29 +149,23 @@ async function player2join(gameID) {
 // Create game list function
 // start game loop //window.reqAnF
 /**
- * @param {String with the gamename} gameName 
+ * @param {String with the gamename} gameName
  * @returns Object / Promise?
  */
-async function findGame(gameName) {
+async function findGameID(gameName) {
+  console.log("find game");
   try {
-    let res = await fetch(`${API_BASE}lists/${gameID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        player2: newTurn,
-      }),
-    });
-    let data = await res.json()
-    return data
+    let res = await fetch(`${API_BASE}listsearch?listname=namn${gameName}`);
+    let data = await res.json();
+    console.log(await data);
+    return data[0]._id;
   } catch (error) {
     console.log(error);
   }
-  
 }
+
 /**
- * @param {* String with the gameID} gameID 
+ * @param {* String with the gameID} gameID
  * @returns the object list with gameID
  */
 async function fetchGame(gameID) {
@@ -187,23 +178,20 @@ async function fetchGame(gameID) {
   }
 }
 /**
-  * Deletes a list with gameID.
+ * Deletes a list with gameID.
  */
 async function deleteGame(gameID) {
   try {
-    const res = await fetch(
-      `https://nackademin-item-tracker.herokuapp.com/lists/${gameID}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const res = await fetch(`${API_BASE}lists/${gameID}`, {
+      method: "DELETE",
+    });
     return console.log("Game deleted");
   } catch (error) {
     console.log(error);
   }
 }
 /** Creates the list-object in the database through an API
- * @param {* String, name for the list} gameName 
+ * @param {* String, name for the list} gameName
  * @returns an object with the property _id
  */
 async function createGame(gameName) {
@@ -226,8 +214,8 @@ async function createGame(gameName) {
   }
 }
 /** Post an object to a list
- * @param {*} gameID 
- * @param {* To get a index property} index 
+ * @param {*} gameID
+ * @param {* To get a index property} index
  */
 async function postObjectToGame(gameID, index) {
   try {
@@ -250,7 +238,7 @@ async function postObjectToGame(gameID, index) {
 }
 /**
  * Generate 9 squares as objects in the database
- * @param {*} gameID 
+ * @param {*} gameID
  */
 async function generateGameObjects(gameID) {
   try {
@@ -304,12 +292,14 @@ startGameBtn.addEventListener("click", async function (e) {
   });
 });
 
-joinForm.addEventListener("submit", (event) => {
+joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   let joinInput = document.querySelector(".join-input").value;
   console.log("Joining game:" + joinInput);
-
-  player2join(gameID);
+  gameID = await findGameID(joinInput.value)
+  await player2join(await gameID);
+  await fetchGame(gameID)
+  window.requestAnimationFrame(main);
 });
 // test runs
 let id = "63f321e5746b831af879cbfa";
