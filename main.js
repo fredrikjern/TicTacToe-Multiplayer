@@ -48,6 +48,7 @@ async function main(currentTime) {
   }
 }
 //window.requestAnimationFrame(main);
+
 /**
  * Game functions
  */
@@ -64,39 +65,29 @@ async function renderBoard(game) {
       div.classList.add("checked");
     } else {
       div.innerHTML = ` ${index}`;
-      div.addEventListener("click", (event) => {
+      div.addEventListener("click", async (event) => {
         event.preventDefault();
-        console.log("klick " + index);
-        // checkSquare(game)
-        gameBoard[index].checked = true;
-        gameBoard[index].checkedByPlayer1 = player1turn ? "x" : "o";
+        console.log("square-klick " + index);
         checkSquare(game, index);
         changeTurn(gameID, player1turn);
       });
-      //   squares[i].addEventListener("click", (event) => {
-      //     event.preventDefault();
-      //     console.log("Eventlistener  :  " + i);
-      //     itemList[0][i].checked = true; // API PUT          changeTurn();
-      //     itemList[0][i].checkedByPlayer1 = itemList.player1turn
-      //       ? true
-      //       : false;
-      //     changeTurn(itemList);
-      //     renderBoard(itemList);
-      //     // API PUT          changeTurn();
-      //   });
     }
     gameContainer.appendChild(div);
   });
 }
+/**
+ * 
+ * @param {* Full game list from API} game 
+ * @param {* Index of the square that should be checked} index 
+ * @returns The new game array? A promise? Check
+ */
 async function checkSquare(game, index) {
- 
-  /// Borde räcka med att skicka in hela listan och plocka ur data här inne.. mindre parameterar
   try {
-     let squareID = game.itemList[index]._id;
-     console.log(squareID);
+    let squareID = game.itemList[index]._id;
+    console.log(squareID);
     let checkedby = game.player1turn ? true : false;
     gameID = game._id;
-     console.log(checkedby);
+    console.log(checkedby);
     let res = await fetch(`${API_BASE}lists/${gameID}/items/${squareID}`, {
       method: "PUT",
       headers: {
@@ -115,6 +106,10 @@ async function checkSquare(game, index) {
     console.log(error);
   }
 }
+/**
+ * @param {* The database ID} gameID 
+ * @param {* Whose turn it is, changes to opposite} player1turn 
+ */
 async function changeTurn(gameID, player1turn) {
   try {
     console.log("changeturn körs med player1turn = " + player1turn);
@@ -129,11 +124,15 @@ async function changeTurn(gameID, player1turn) {
         player1turn: newTurn,
       }),
     });
-    
   } catch (error) {
     console.log(error);
   }
 }
+/** Player 2 join
+ * Sends a PUT to change player2: false -> true
+ * @param {*} gameID 
+ * @returns Promise?
+ */
 async function player2join(gameID) {
   try {
     await fetch(`${API_BASE}lists/${gameID}`, {
@@ -145,13 +144,39 @@ async function player2join(gameID) {
         player2: true,
       }),
     });
+    return true;
   } catch (error) {
     console.log(error);
   }
 }
 // Create game list function
 // start game loop //window.reqAnF
-
+/**
+ * @param {String with the gamename} gameName 
+ * @returns Object / Promise?
+ */
+async function findGame(gameName) {
+  try {
+    let res = await fetch(`${API_BASE}lists/${gameID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        player2: newTurn,
+      }),
+    });
+    let data = await res.json()
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+  
+}
+/**
+ * @param {* String with the gameID} gameID 
+ * @returns the object list with gameID
+ */
 async function fetchGame(gameID) {
   try {
     const gameList = await fetch(`${API_BASE}lists/${gameID}`);
@@ -161,6 +186,9 @@ async function fetchGame(gameID) {
     console.log(error);
   }
 }
+/**
+  * Deletes a list with gameID.
+ */
 async function deleteGame(gameID) {
   try {
     const res = await fetch(
@@ -174,6 +202,10 @@ async function deleteGame(gameID) {
     console.log(error);
   }
 }
+/** Creates the list-object in the database through an API
+ * @param {* String, name for the list} gameName 
+ * @returns an object with the property _id
+ */
 async function createGame(gameName) {
   try {
     const res = await fetch(`${API_BASE}lists`, {
@@ -193,6 +225,10 @@ async function createGame(gameName) {
     console.log(error);
   }
 }
+/** Post an object to a list
+ * @param {*} gameID 
+ * @param {* To get a index property} index 
+ */
 async function postObjectToGame(gameID, index) {
   try {
     const res = await fetch(`${API_BASE}lists/${gameID}/items`, {
@@ -212,6 +248,10 @@ async function postObjectToGame(gameID, index) {
     console.log(error);
   }
 }
+/**
+ * Generate 9 squares as objects in the database
+ * @param {*} gameID 
+ */
 async function generateGameObjects(gameID) {
   try {
     for (let index = 0; index < 9; index++) {
@@ -222,6 +262,9 @@ async function generateGameObjects(gameID) {
   }
   return;
 }
+/**
+ * @returns A 6-number-String with random numbers.
+ */
 function randomNumberStr() {
   let random1 = Math.floor(Math.random() * 9) + 1;
   let random2 = Math.floor(Math.random() * 9) + 1;
@@ -264,30 +307,18 @@ startGameBtn.addEventListener("click", async function (e) {
 joinForm.addEventListener("submit", (event) => {
   event.preventDefault();
   let joinInput = document.querySelector(".join-input").value;
-  console.log(joinInput);
-  player2 = true;
-});
-deleteForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  let deleteInput = document.querySelector(".delete-input");
-  deleteID = deleteInput.value;
-  console.log("deletar  ID: " + deleteID);
-  deleteGame(deleteID);
-  deleteForm.reset();
-});
+  console.log("Joining game:" + joinInput);
 
+  player2join(gameID);
+});
 // test runs
 let id = "63f321e5746b831af879cbfa";
 async function asynctest(id) {
   game = await fetchGame(id);
   console.log("test");
   console.log(game);
-  let test = await checkSquare(game, '5');
+  let test = await checkSquare(game, "5");
   console.log(test);
-  changeTurn(game._id,game.player1turn)
+  changeTurn(game._id, game.player1turn);
 }
-asynctest(id)
-
-
-
-
+//asynctest(id)
