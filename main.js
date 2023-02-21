@@ -1,7 +1,8 @@
 const UPDATE_INTERVAL = 2;
-const GAME_LIMIT = 120;
+const GAME_LIMIT = 50;
 const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
 let deleteCurrentGame = document.querySelector(".delete-current-game");
+let gameOverBtn = document.querySelector(".game-over-button");
 let showIdContainer = document.querySelector(".showID");
 let deleteForm = document.querySelector(".delete-form");
 let deleteInput = document.querySelector(".delete-input");
@@ -16,7 +17,13 @@ let gameOver = false;
 let gameName;
 let gameID;
 let player1turn;
-/** Game Loop */
+
+/**  --- Game loop ---
+ *  Incursive loop that updates ever UPDATE_INTERVAL [seconds], requests game from API,
+ *  checks if someone's won and renders the current game in the DOM.
+ * @param {* currentTime is the time since script is loaded?} currentTime
+ * @returns {* a String : "game over" when the game is over, loop is ended and game deleted}
+ */
 async function main(currentTime) {
   try {
     if (currentTime > GAME_LIMIT * 1000) {
@@ -25,9 +32,7 @@ async function main(currentTime) {
     }
     if (gameOver) {
       deleteGame(gameID);
-      if (confirm("Game over")) {
-        window.location = "/";
-      }
+      return console.log("game over");
     }
 
     const secondsSinceLastRender = currentTime - lastRenderTime;
@@ -49,8 +54,9 @@ async function main(currentTime) {
 }
 //window.requestAnimationFrame(main);
 
-/**
- * Game functions
+/** --- renderBoard ----
+ *
+ * @param {* Object } game
  */
 async function renderBoard(game) {
   gameBoard = game.itemList;
@@ -146,8 +152,6 @@ async function player2join(gameID) {
     console.log(error);
   }
 }
-// Create game list function
-// start game loop //window.reqAnF
 /**
  * @param {String with the gamename} gameName
  * @returns Object / Promise?
@@ -155,15 +159,14 @@ async function player2join(gameID) {
 async function findGameID(gameName) {
   console.log("find game");
   try {
-    let res = await fetch(`${API_BASE}listsearch?listname=namn${gameName}`);
+    let res = await fetch(`${API_BASE}listsearch?listname=${gameName}`);
     let data = await res.json();
     console.log(await data);
-    return data[0]._id;
+    return data;
   } catch (error) {
     console.log(error);
   }
 }
-
 /**
  * @param {* String with the gameID} gameID
  * @returns the object list with gameID
@@ -262,16 +265,8 @@ function randomNumberStr() {
   let random6 = Math.floor(Math.random() * 9) + 1;
   return `${random1}${random2}${random3}${random4}${random5}${random6}`;
 }
-/** Fel sätt
- * // async function getGame(gameID) { FEL sätt
-//   const gameList = await fetch(`${API_BASE}lists/${gameID}`);
-//   const gameListResult = await gameList.json();
-//   return gameListResult;
-// }
- */
-/**
- * Eventlisteners
- */
+/** Eventlisteners */
+// ---- Start Game ----
 startGameBtn.addEventListener("click", async function (e) {
   e.preventDefault();
   player1 = true;
@@ -284,31 +279,32 @@ startGameBtn.addEventListener("click", async function (e) {
   await generateGameObjects(gameID);
   game = await fetchGame(gameID);
   console.log(game);
-  //deleteGame(gameID);
-  deleteCurrentGame.addEventListener("click", (event) => {
-    event.preventDefault();
-    deleteGame(gameID);
-    console.log("delete gameID: " + gameID);
-  });
+  window.requestAnimationFrame(main);
 });
-
+// --- Join ----
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   let joinInput = document.querySelector(".join-input").value;
-  console.log("Joining game:" + joinInput);
-  gameID = await findGameID(joinInput.value)
-  await player2join(await gameID);
-  await fetchGame(gameID)
+  console.log("Joining game: " + joinInput);
+  let gameID2 = await findGameID(joinInput);
+  console.log(gameID2);
+  await player2join(await gameID2);
+  await fetchGame(gameID2);
   window.requestAnimationFrame(main);
 });
+
+gameOverBtn.addEventListener("click", (event) => {
+  event.preventDefault();
+  gameOver = true;
+});
 // test runs
-let id = "63f321e5746b831af879cbfa";
-async function asynctest(id) {
-  game = await fetchGame(id);
-  console.log("test");
-  console.log(game);
-  let test = await checkSquare(game, "5");
-  console.log(test);
-  changeTurn(game._id, game.player1turn);
-}
+// let id = "63f321e5746b831af879cbfa";
+// async function asynctest(id) {
+//   game = await fetchGame(id);
+//   console.log("test");
+//   console.log(game);
+//   let test = await checkSquare(game, "5");
+//   console.log(test);
+//   changeTurn(game._id, game.player1turn);
+// }
 //asynctest(id)
