@@ -19,7 +19,7 @@ let gameID;
 let player1turn;
 
 /**  --- Game loop ---
- *  Incursive loop that updates ever UPDATE_INTERVAL [seconds], requests game from API,
+ *  Incursive loop that updates every UPDATE_INTERVAL [seconds], requests game from API,
  *  checks if someone's won and renders the current game in the DOM.
  * @param {* currentTime is the time since script is loaded?} currentTime
  * @returns {* a String : "game over" when the game is over, loop is ended and game deleted}
