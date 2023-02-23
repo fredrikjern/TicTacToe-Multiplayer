@@ -1,39 +1,78 @@
+$base-color: #76606b;
+$base-color-light: hsl(330,11%, 32%);
+$base-color-dark: #55454d;
 *{
     padding: 0;
     margin: 0;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 16px;
+    background: $base-color-dark;
 
 
 }
 header{
+    background: $base-color;
     display: flex;
     justify-content: space-evenly;
     padding: 8px;
+
+}
+.initial{
+    background: $base-color;
+    padding: 16px;
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height:50%;
+  width: 70%;
+  transform: translate(50%,-50%);
+  
+  outline: 1px solid black;
+  & > div  {
+    padding: 0.4rem;
+    flex-direction: column;
+    margin: 8px;
+    outline: 1px solid red;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover{
+        background: $base-color-light;
+    }
+  }
+
 }
 
 main {
     margin: auto;
     padding-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 16px;
     .game-container {
-        margin: auto;
+        
         padding: 1rem;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(3, 1fr);
         background: gray;
-        width: 92vw;
-        height: 92vw;
+        width: 90vh;
+        height: 90vh;
+        max-height: 90vw;
         
         border: 1px solid black;
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
         
-        .join {
-            flex-direction: column;
-
-        }
+  
         & > div {
             display: flex;
             justify-content: center;
