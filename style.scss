@@ -1,59 +1,105 @@
-*{
-    padding: 0;
-    margin: 0;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: 16px;
-
-
+$base-color-opace: rgba(118, 96, 107, 10%);
+$base-color: #76606b;
+$base-color-light: hsl(330, 11%, 32%);
+$base-color-dark: #55454d;
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 16px;
+  background: $base-color-dark;
 }
-header{
-    display: flex;
-    justify-content: space-evenly;
-    padding: 8px;
-}
-
-main {
-    margin: auto;
-    padding-top: 2rem;
-    .game-container {
-        margin: auto;
-        padding: 1rem;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        background: gray;
-        width: 92vw;
-        height: 92vw;
-        
-        border: 1px solid black;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        
-        .join {
-            flex-direction: column;
-
-        }
-        & > div {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 6rem;
-            color: rgb(188, 191, 194);
-            min-width:100px;
-            min-height: 100px;
-            max-width: 400px;
-            max-height: 400px;
-            aspect-ratio: 1/1;
-            border: 1px solid black;
-            &.checked{
-                background: black;
-            }
-            &:hover{
-                background: rgb(109, 108, 108);
-            }
-        }
-
+body{
+    .red-border{
+        border: 1px solid rgb(150, 35, 6);
+    }
+    .green-border{
+        border: 1px solid rgb(2, 86, 2);
     }
 }
+header {
+  background: $base-color;
+  display: flex;
+  justify-content: space-evenly;
+  padding: 8px;
+  & > div {
+    border-radius: 8px;
 
+  }
+}
+.initial {
+  background: $base-color;
+  padding: 16px;
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  transform: translate(50%, -50%);
+
+  outline: 1px solid black;
+  & > div {
+    padding: 0.4rem;
+    flex-direction: column;
+    margin: 8px;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+      background: $base-color-light;
+    }
+  }
+  &.hidden {
+    display: none;
+  }
+}
+main {
+  margin: auto;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 16px;
+  .game-container {
+    margin: 16px;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    background: gray;
+    width: 90vh;
+    height: 90vh;
+    max-height: 90vw;
+    border: 1px solid black;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+
+    & > div {
+      margin: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 6rem;
+      color: rgb(188, 191, 194);
+      min-width: 50px;
+      min-height: 50px;
+      max-width: 400px;
+      max-height: 400px;
+      aspect-ratio: 1/1;
+      border: 1px solid black;
+      &.checked {
+        background: black;
+      }
+      &:hover {
+        background: rgb(109, 108, 108);
+      }
+    }
+  }
+}

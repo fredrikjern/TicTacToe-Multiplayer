@@ -1,6 +1,7 @@
-const UPDATE_INTERVAL = 2;
-const GAME_LIMIT = 50;
+const UPDATE_INTERVAL = 1000;
+const GAME_LIMIT = 20;
 const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
+let iterations = 0;
 let deleteCurrentGame = document.querySelector(".delete-current-game");
 let gameOverBtn = document.querySelector(".game-over-button");
 let showIdContainer = document.querySelector(".showID");
@@ -9,253 +10,192 @@ let deleteInput = document.querySelector(".delete-input");
 let gameContainer = document.querySelector(".game-container");
 let startGameBtn = document.querySelector(".start");
 let joinForm = document.querySelector(".join-form");
+let initial = document.querySelector(".initial");
+let p1div = document.querySelector(".p1");
 let game;
 let lastRenderTime = 0;
-let player1;
-let player2;
+let player1 = null;
 let gameOver = false;
 let gameName;
 let gameID;
 let player1turn;
+let board = [];
+let correctArrays = [[0, 1, 2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+function checkWinner(board,correctArrays) {
+  let p1 = [];
+  let p2 = [];
+  board.forEach((item, index) => {
+    if (item === 1) p1.push(index);
+    if (item === 2) p2.push(index);
+  });
+  
+}
+async function gameLoop(gameID) {
+  let game = await fetchGame(gameID);
+  board = game.board;
+  let player1turn = game.player1turn;
+  checkWinner(board);
+  renderBoard(board);
+  if (game.player2joined)
+    boardEventListeners(board, player1turn, player1, gameID);
 
-/**  --- Game loop ---
- *  Incursive loop that updates every UPDATE_INTERVAL [seconds], requests game from API,
- *  checks if someone's won and renders the current game in the DOM.
- * @param {* currentTime is the time since script is loaded?} currentTime
- * @returns {* a String : "game over" when the game is over, loop is ended and game deleted}
- */
-async function main(currentTime) {
-  try {
-    if (currentTime > GAME_LIMIT * 1000) {
-      gameOver = true;
-      alert("timeout");
-    }
-    if (gameOver) {
-      deleteGame(gameID);
-      return console.log("game over");
-    }
-
-    const secondsSinceLastRender = currentTime - lastRenderTime;
-    if (
-      secondsSinceLastRender > UPDATE_INTERVAL * 1000 ||
-      lastRenderTime === 0
-    ) {
-      console.log(currentTime);
-      console.log(`${UPDATE_INTERVAL}s uppdatering`);
-      lastRenderTime = currentTime;
-      let game = await fetchGame(gameID);
-      renderBoard(game);
-    }
-    window.requestAnimationFrame(main); // Den kör sig själv incursive
-  } catch (error) {
-    console.log(error);
-    console.log("feel i main");
+  if (!gameOver && iterations < GAME_LIMIT) {
+    setTimeout(() => {
+      console.log("Kör sig själv igen");
+      iterations++;
+      gameLoop(gameID);
+    }, UPDATE_INTERVAL);
+  } else {
+    console.log("game over!   iterations: " + iterations);
+    deleteGame(gameID);
+    renderBoard(board);
   }
 }
-//window.requestAnimationFrame(main);
+// ---- Färdiga
+//
+async function player2join(gameID) {
+  return fetch(`${API_BASE}lists/${gameID}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      player1turn: true,
+      player2joined: true,
+    }),
+  });
+}
+//
+async function checkSquare(board, player1turn, gameID) {
+  try {
+    let turn = player1turn ? false : true;
+    let res = await fetch(`${API_BASE}lists/${gameID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        board: board,
+        player1turn: turn,
+      }),
+    });
+    let data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+//
+function boardEventListeners(board, player1turn, player1, gameID) {
+  let squares = document.querySelectorAll(".square");
 
-/** --- renderBoard ----
- *
- * @param {* Object } game
- */
-async function renderBoard(game) {
-  gameBoard = game.itemList;
-  player1turn = game.player1turn;
-  gameContainer.innerHTML = "";
-  console.log(gameBoard);
-  gameBoard.forEach((item, index) => {
-    let div = document.createElement("div");
-    div.classList.add("square");
-    if (item.checked) {
-      div.innerHTML = item.checkedByPlayer1 ? "x" : "o";
-      div.classList.add("checked");
-    } else {
-      div.innerHTML = ` ${index}`; //Ta bort senare
-      div.addEventListener("click", async (event) => {
+  squares.forEach((square, index) => {
+    // console.log(player1);
+    // console.log(player1turn);
+    if (player1 && player1turn && board[index] === 0) {
+      console.log("kör denna");
+      square.addEventListener("click", async (event) => {
         event.preventDefault();
-        console.log("square-klick: " + index);
-        await checkSquare(game, index);
-        await changeTurn(gameID, player1turn);
+        square.innerHTML = "X";
+        board[index] = 1;
+        console.log(board);
+        console.log("klick: " + index);
+        renderBoard(board);
+        checkSquare(board, player1turn, gameID);
+        //
       });
     }
-    gameContainer.appendChild(div);
+    if (!player1 && !player1turn && board[index] === 0) {
+      square.addEventListener("click", (event) => {
+        console.log("player 2 fick eventlisteners");
+        event.preventDefault();
+        square.innerHTML = "O";
+        board[index] = 2;
+        console.log(board);
+        renderBoard(board);
+        checkSquare(board, player1turn, gameID);
+        console.log("klick: " + index);
+      });
+    }
   });
 }
 /**
- *
- * @param {* Full game list from API} game
- * @param {* Index of the square that should be checked} index
- * @returns The new game array? A promise? Check
+ * This functions creates the div's that become the squares and marks them with X/O
+ * @param {* An array []} board
  */
-async function checkSquare(game, index) {
-  try {
-    let squareID = game.itemList[index]._id;
-    console.log(squareID);
-    let res = await fetch(`${API_BASE}lists/${game._id}/items/${squareID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        checked: true,
-        checkedByPlayer1: game.player1turn ? true : false,
-      }),
-    });
-    let data = await res.json();
-    console.log(data);
-    console.log("Player1:" + game.player1turn);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+function renderBoard(board) {
+  console.log(board);
+  gameContainer.innerHTML = "";
+  board.forEach((squareresults, index) => {
+    let square = document.createElement("div");
+    //square.innerHTML=`${squareresults}`
+    square.classList.add("square");
+    if (squareresults === 1) square.innerHTML = "X";
+    if (squareresults === 2) square.innerHTML = "O";
+    gameContainer.appendChild(square);
+  });
 }
-/**
- * @param {* The database ID} gameID
- * @param {* Whose turn it is, changes to opposite} player1turn
- */
-async function changeTurn(gameID, player1turn) {
-  try {
-    console.log("changeturn körs med player1turn = " + player1turn);
-    let newTurn = player1turn ? false : true;
-    /// Borde räcka med att skicka in hela listan och plocka ur data här inne.. mindre parameterar
-    await fetch(`${API_BASE}lists/${gameID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        player1turn: newTurn,
-      }),
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-/** Player 2 join
- * Sends a PUT to change player2: false -> true
- * @param {*} gameID
- * @returns Promise?
- */
-async function player2join(gameID) {
-  try {
-    await fetch(`${API_BASE}lists/${gameID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        player2: true,
-      }),
-    });
-    return true;
-  } catch (error) {
-    console.log(error);
-  }
-}
-/**
- * @param {String with the gamename} gameName
- * @returns Object / Promise?
- */
-async function findGameID(gameName) {
-  console.log("find game");
-  try {
-    let res = await fetch(`${API_BASE}listsearch?listname=${gameName}`);
-    let data = await res.json();
-    console.log(await data);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
-/**
- * @param {* String with the gameID} gameID
- * @returns the object list with gameID
- */
 async function fetchGame(gameID) {
   try {
-    const gameList = await fetch(`${API_BASE}lists/${gameID}`);
-    const gameListResult = await gameList.json();
-    return gameListResult;
+    const response = await fetch(`${API_BASE}lists/${gameID}`);
+    const data = await response.json();
+
+    return data;
   } catch (error) {
     console.log(error);
   }
 }
-/**
- * Deletes a list with gameID.
- */
-async function deleteGame(gameID) {
-  try {
-    const res = await fetch(`${API_BASE}lists/${gameID}`, {
-      method: "DELETE",
-    });
-    return console.log("Game deleted");
-  } catch (error) {
-    console.log(error);
-  }
-}
-/** Creates the list-object in the database through an API
- * @param {* String, name for the list} gameName
- * @returns an object with the property _id
- */
 async function createGame(gameName) {
   try {
     const res = await fetch(`${API_BASE}lists`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      },
+      }, //* Ändra player1turn till false, ändras när p2 joinar
       body: JSON.stringify({
         listname: gameName,
+        board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         player1turn: false,
-        player2: false,
+        player2joined: false,
       }),
     });
     const data = await res.json();
-    return data;
+    let game_ID = data.list._id;
+    return game_ID;
   } catch (error) {
     console.log(error);
   }
 }
-/** Post an object to a list
- * @param {*} gameID
- * @param {* To get a index property} index
- */
-async function postObjectToGame(gameID, index) {
+async function deleteGame(gameID) {
   try {
-    const res = await fetch(`${API_BASE}lists/${gameID}/items`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        checked: false,
-        checkedByPlayer1: false,
-        index: `${index}`,
-      }),
+    const res = await fetch(`${API_BASE}lists/${gameID}`, {
+      method: "DELETE",
     });
-    data = await res.json();
-    return data;
+    return console.log("Game deleted: " + gameID);
   } catch (error) {
     console.log(error);
   }
 }
-/**
- * Generate 9 squares as objects in the database
- * @param {*} gameID
- */
-async function generateGameObjects(gameID) {
+async function findGameID(gameName) {
   try {
-    for (let index = 0; index < 9; index++) {
-      await postObjectToGame(gameID, index);
-    }
+    let res = await fetch(`${API_BASE}listsearch?listname=${gameName}`);
+    let data = await res.json();
+    let g = data[0]._id;
+    return g;
   } catch (error) {
     console.log(error);
   }
-  return;
 }
-/**
- * @returns A 6-number-String with random numbers.
- */
+function copyToClipboard(copyText) {
+  navigator.clipboard
+    .writeText(copyText)
+    .then(() => {
+      console.log("Text copied to clipboard");
+    })
+    .catch((error) => {
+      console.error("Error copying text: ", error);
+    });
+}
 function randomNumberStr() {
   let random1 = Math.floor(Math.random() * 9) + 1;
   let random2 = Math.floor(Math.random() * 9) + 1;
@@ -265,46 +205,35 @@ function randomNumberStr() {
   let random6 = Math.floor(Math.random() * 9) + 1;
   return `${random1}${random2}${random3}${random4}${random5}${random6}`;
 }
-/** Eventlisteners */
-// ---- Start Game ----
+//! Eventlisteners
 startGameBtn.addEventListener("click", async function (e) {
   e.preventDefault();
   player1 = true;
   gameName = randomNumberStr();
-  showIdContainer.innerHTML = `${gameName} `;
-  gameList = await createGame(gameName);
-  console.log(gameList);
-  gameID = await gameList.list._id; // behövs denna await?
-  console.log(gameID);
-  await generateGameObjects(gameID);
-  game = await fetchGame(gameID);
-  console.log(game);
-  window.requestAnimationFrame(main);
+  let gameID = await createGame(gameName);
+  showIdContainer.innerHTML = `${gameName} (copied to clipboard)`;
+  copyToClipboard(gameName);
+  gameLoop(gameID);
+  initial.classList.add("hidden");
+  p1div.classList.add("green-border");
 });
-// --- Join ----
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  player1 = true;
+  player1 = false;
   let joinInput = document.querySelector(".join-input").value;
   console.log("Joining game: " + joinInput);
-  let gameID2 = await findGameID(joinInput);
-  console.log(gameID2);
-  await player2join(await gameID2);
-  await fetchGame(gameID2);
-  window.requestAnimationFrame(main);
+  showIdContainer.innerHTML = `${joinInput} (copied to clipboard)`;
+  initial.classList.add("hidden");
+  p1div.classList.add("green-border");
+  gameID = await findGameID(joinInput);
+  await player2join(gameID);
+  gameLoop(gameID);
+  console.log(gameID);
 });
+//! ---
 
-gameOverBtn.addEventListener("click", (event) => {
-  event.preventDefault();
-  gameOver = true;
-});
-// test runs
-// let id = "63f321e5746b831af879cbfa";
-// async function asynctest(id) {
-//   game = await fetchGame(id);
-//   console.log("test");
-//   console.log(game);
-//   let test = await checkSquare(game, "5");
-//   console.log(test);
-//   changeTurn(game._id, game.player1turn);
-// }
-//asynctest(id)
+//!  -------
+// let array = [0, 1, 2, 3, 4, 5, 7, 8]
+
+// array.forEach((item,index) => console.log(item + " " + index));

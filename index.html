@@ -12,26 +12,41 @@
 
 <body>
     <header>
+        <div class="p1"><h1>Player1</h1><div></div></div>
+    </div><div>
+        <h1>Tic tac toe  GameID:</h1>
+        <h2 class="showID">ID</h2>
+    </div>
+    <div><button class="game-over-button">Game over b</button></div>
         <div>
-            <h1>Tic tac toe  GameID:</h1>
-            <h2 class="showID">ID</h2>
-        </div>
-        <div><button class="game-over-button">Game over b</button></div>
+      <div class="p2"><h2>Player 2</h2></div>      
     </header>
-    <main>
+    <div class="initial">
+        <div class="start">
+            <h3>Start new game</h3>
+            <p>Gamecode will be copied to clipboard</p>
+        </div>
+        <div class="join">
+            <p>
+                Join a game with code:
+            </p>
+           <form action="submit" class="join-form">
+            <input type="text" class="join-input" required>
+            <button>Join</button>
+           </form>
+        </div>
+    </div>
+    <main> 
         <section class="game-container">
-            <div class="start">
-                <p>Start new game</p>
-            </div>
-            <div class="join">
-                <p>
-                    Join a game with code:
-                </p>
-               <form action="submit" class="join-form">
-                <input type="text" class="join-input" required>
-                <button>Join</button>
-               </form>
-            </div>
+                <div class="square square-0"></div>
+                <div class="square square-1"></div>
+                <div class="square square-2"></div>
+                <div class="square square-3"></div>
+                <div class="square square-4"></div>
+                <div class="square square-5"></div>
+                <div class="square square-6"></div>
+                <div class="square square-7"></div>
+                <div class="square square-8"></div>
         </section>
     </main>
     <footer>

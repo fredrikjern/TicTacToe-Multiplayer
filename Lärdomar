@@ -6,4 +6,10 @@ bättre och förmodligen mer lättläst.
 
 2. Datastrukturen var onödigt djup vilket ledde till många API request, framförallt initialt. Errorhanteringen blev onödigt jobbig om än lösbar
 
-3. Inte bestämt mig om det bästa är att rendera om hela
+3. Inte bestämt mig om det bästa är att rendera om hela..
+
+funderar på om det inte bara går att loopa över alla squares och ta bort 
+eventlisteners och sen lägga till ?
+Då kan jag använda klasser för att styra symboler etc, borde gå att få till snygga animationer då också.
+
+    
