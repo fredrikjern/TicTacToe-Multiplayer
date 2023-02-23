@@ -1,0 +1,9 @@
+1. att bygga game-loopen med windows.requestAnimationFrame() var inte genialt 
+då den uppdaterar enligt ett fixed intervall och tar inte hänsyn till att 
+APIet tar lite olika lång tid på sig att svara. 
+En inkursiv funktion med set timeout efter att responsen mottagits blir 
+bättre och förmodligen mer lättläst.
+
+2. Datastrukturen var onödigt djup vilket ledde till många API request, framförallt initialt. Errorhanteringen blev onödigt jobbig om än lösbar
+
+3. Inte bestämt mig om det bästa är att rendera om hela
