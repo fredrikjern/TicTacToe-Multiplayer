@@ -19,8 +19,10 @@ let gameName;
 let gameID;
 let player1turn;
 
-
-function (params) {
+function createGame(gameName) {
+  
+}
+function gameLoop (gameID) {
   
 }
 
@@ -51,7 +53,13 @@ startGameBtn.addEventListener("click", async function (e) {
   copyToClipboard(gameName)
 
 });
+//! ---
 
-let array = [0, 1, 2, 3, 4, 5, 7, 8]
 
-array.forEach((item,index) => console.log(item + " " + index));
+
+
+
+//!  -------
+// let array = [0, 1, 2, 3, 4, 5, 7, 8]
+
+// array.forEach((item,index) => console.log(item + " " + index));
