@@ -88,14 +88,19 @@ header > div .play2not {
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.2);
 }
 .initial > div > * {
+  text-align: center;
   margin: 8px;
   font-size: 1.5rem;
 }
+.initial > div p {
+  font-size: 1rem;
+}
 .initial > div:hover {
   background: hsl(130deg, 10%, 70%);
-  transition: 0.2ms;
+  transition: 0.35ms;
   transform: scale(1.01);
   box-shadow: 4px 5px 5px 0px rgba(0, 0, 0, 0.25);
 }
