@@ -12,6 +12,7 @@ let startGameBtn = document.querySelector(".start");
 let joinForm = document.querySelector(".join-form");
 let initial = document.querySelector(".initial");
 let p1div = document.querySelector(".p1");
+let p2div = document.querySelector(".p2")
 let game;
 let lastRenderTime = 0;
 let player1 = null;
@@ -28,11 +29,15 @@ function checkWinner(board,correctArrays) {
     if (item === 1) p1.push(index);
     if (item === 2) p2.push(index);
   });
-  
+
 }
 async function gameLoop(gameID) {
   let game = await fetchGame(gameID);
   board = game.board;
+  if (game.player2join) {
+    p2.classList.remove("play2not")
+    
+  }
   let player1turn = game.player1turn;
   checkWinner(board);
   renderBoard(board);

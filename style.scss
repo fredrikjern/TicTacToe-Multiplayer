@@ -1,7 +1,9 @@
-$base-color-opace: rgba(118, 96, 107, 10%);
-$base-color: #76606b;
-$base-color-light: hsl(330, 11%, 32%);
-$base-color-dark: #55454d;
+$base-color-opace: 516715;
+$base-color: hsl(130, 10%, 55%);
+$base-color-medium-light: hsl(130, 10%, 70%);
+$base-color-light: hsl(130, 10%, 75%);
+$base-color-dark: hsl(130, 10%, 65%);
+$grid: hsl(140, 9%, 7%);
 * {
   padding: 0;
   margin: 0;
@@ -9,13 +11,13 @@ $base-color-dark: #55454d;
   font-size: 16px;
   background: $base-color-dark;
 }
-body{
-    .red-border{
-        border: 1px solid rgb(150, 35, 6);
-    }
-    .green-border{
-        border: 1px solid rgb(2, 86, 2);
-    }
+body {
+  .red-border {
+    border: 1px solid rgb(150, 35, 6);
+  }
+  .green-border {
+    border: 1px solid rgb(2, 86, 2);
+  }
 }
 header {
   background: $base-color;
@@ -23,8 +25,13 @@ header {
   justify-content: space-evenly;
   padding: 8px;
   & > div {
-    border-radius: 8px;
-
+    display: flex;
+    justify-content: center;
+    width: 20%;
+    .play2not {
+      color: gray !important;
+      background: rgb(67, 66, 66) !important;
+    }
   }
 }
 .initial {
@@ -39,20 +46,71 @@ header {
   flex-direction: row;
   height: 100%;
   width: 100%;
+  padding: 32px;
   transform: translate(50%, -50%);
 
-  outline: 1px solid black;
+  h3 {
+    letter-spacing: 1.5px;
+  }
+  form {
+    button {
+      letter-spacing: 1px;
+      margin-top: 6px;
+      background: none;
+      color: inherit;
+      border: 1px solid rgb(47, 58, 48);
+      width: 100%;
+      padding: 6px;
+      font: inherit;
+      cursor: pointer;
+      outline: none;
+      transition: 0.2ms;
+      &:hover {
+        transform: scale(1.03);
+
+        background: $base-color-light;
+      }
+    }
+    input {
+      background: $base-color-light;
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: none;
+      border-bottom: 1px solid black;
+      &:focus {
+        outline: none;
+        border: 1px solid rgb(54, 75, 54);
+      }
+    }
+  }
   & > div {
     padding: 0.4rem;
     flex-direction: column;
     margin: 8px;
     width: 50%;
     height: 50%;
+    max-height: 224px;
+    max-width: 384px;
     display: flex;
     justify-content: center;
     align-items: center;
+    & > * {
+      margin: 8px;
+      font-size: 1.5rem;
+    }
+
     &:hover {
-      background: $base-color-light;
+      background: $base-color-medium-light;
+      transition: 0.2ms;
+      transform: scale(1.01);
+      box-shadow: 4px 5px 5px 0px rgba(0, 0, 0, 0.25);
+      & h3,
+      p,
+      form {
+        background: $base-color-medium-light;
+      }
     }
   }
   &.hidden {
@@ -68,11 +126,11 @@ main {
   padding-bottom: 16px;
   .game-container {
     margin: 16px;
-    padding: 1rem;
+    padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    background: gray;
+    background: $grid;
     width: 90vh;
     height: 90vh;
     max-height: 90vw;
@@ -80,9 +138,10 @@ main {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
 
     & > div {
-      margin: 8px;
+      margin: 0px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -93,13 +152,35 @@ main {
       max-width: 400px;
       max-height: 400px;
       aspect-ratio: 1/1;
-      border: 1px solid black;
+
       &.checked {
         background: black;
       }
       &:hover {
-        background: rgb(109, 108, 108);
+        background: $base-color;
       }
+    }
+  }
+}
+footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 2rem;
+}
+
+// @media only screen and (min-width: 896px) {
+//   body {
+//     .game-container {
+//       background: red;
+//     }
+//   }
+// }
+
+@media only screen and (max-width: 800px) {
+  body {
+    .initial {
+      flex-direction: column;
+      padding: 0px;
     }
   }
 }
