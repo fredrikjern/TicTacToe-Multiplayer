@@ -3,7 +3,7 @@
   margin: 0;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 16px;
-  background: #55454d;
+  background: hsl(130deg, 10%, 65%);
 }
 
 body .red-border {
@@ -14,17 +14,23 @@ body .green-border {
 }
 
 header {
-  background: #76606b;
+  background: hsl(130deg, 10%, 55%);
   display: flex;
   justify-content: space-evenly;
   padding: 8px;
 }
 header > div {
-  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  width: 20%;
+}
+header > div .play2not {
+  color: gray !important;
+  background: rgb(67, 66, 66) !important;
 }
 
 .initial {
-  background: #76606b;
+  background: hsl(130deg, 10%, 55%);
   padding: 16px;
   position: absolute;
   right: 50%;
@@ -35,8 +41,41 @@ header > div {
   flex-direction: row;
   height: 100%;
   width: 100%;
+  padding: 32px;
   transform: translate(50%, -50%);
-  outline: 1px solid black;
+}
+.initial h3 {
+  letter-spacing: 1.5px;
+}
+.initial form button {
+  letter-spacing: 1px;
+  margin-top: 6px;
+  background: none;
+  color: inherit;
+  border: 1px solid rgb(47, 58, 48);
+  width: 100%;
+  padding: 6px;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: 0.2ms;
+}
+.initial form button:hover {
+  transform: scale(1.03);
+  background: hsl(130deg, 10%, 75%);
+}
+.initial form input {
+  background: hsl(130deg, 10%, 75%);
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid black;
+}
+.initial form input:focus {
+  outline: none;
+  border: 1px solid rgb(54, 75, 54);
 }
 .initial > div {
   padding: 0.4rem;
@@ -44,12 +83,31 @@ header > div {
   margin: 8px;
   width: 50%;
   height: 50%;
+  max-height: 224px;
+  max-width: 384px;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.2);
+}
+.initial > div > * {
+  text-align: center;
+  margin: 8px;
+  font-size: 1.5rem;
+}
+.initial > div p {
+  font-size: 1rem;
 }
 .initial > div:hover {
-  background: hsl(330deg, 11%, 32%);
+  background: hsl(130deg, 10%, 70%);
+  transition: 0.35ms;
+  transform: scale(1.01);
+  box-shadow: 4px 5px 5px 0px rgba(0, 0, 0, 0.25);
+}
+.initial > div:hover h3,
+.initial > div:hover p,
+.initial > div:hover form {
+  background: hsl(130deg, 10%, 70%);
 }
 .initial.hidden {
   display: none;
@@ -65,11 +123,11 @@ main {
 }
 main .game-container {
   margin: 16px;
-  padding: 1rem;
+  padding: 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  background: gray;
+  background: hsl(140deg, 9%, 7%);
   width: 90vh;
   height: 90vh;
   max-height: 90vw;
@@ -77,9 +135,10 @@ main .game-container {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 main .game-container > div {
-  margin: 8px;
+  margin: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -90,11 +149,23 @@ main .game-container > div {
   max-width: 400px;
   max-height: 400px;
   aspect-ratio: 1/1;
-  border: 1px solid black;
 }
 main .game-container > div.checked {
   background: black;
 }
 main .game-container > div:hover {
-  background: rgb(109, 108, 108);
+  background: hsl(130deg, 10%, 55%);
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 2rem;
+}
+
+@media only screen and (max-width: 800px) {
+  body .initial {
+    flex-direction: column;
+    padding: 0px;
+  }
 }/*# sourceMappingURL=style.css.map */
