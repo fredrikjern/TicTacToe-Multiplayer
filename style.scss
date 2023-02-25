@@ -2,40 +2,62 @@ $base-color-opace: 516715;
 $base-color: hsl(130, 10%, 55%);
 $base-color-medium-light: hsl(130, 10%, 70%);
 $base-color-light: hsl(130, 10%, 75%);
+$base-color-lightest: hsl(130, 10%, 95%);
 $base-color-dark: hsl(130, 10%, 65%);
+$base-color-darkest: hsl(130, 10%, 16%);
 $grid: hsl(140, 9%, 7%);
 * {
   padding: 0;
-  margin: 0;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 16px;
-  background: $base-color-dark;
 }
 body {
-  .red-border {
-    border: 1px solid rgb(150, 35, 6);
-  }
-  .green-border {
-    border: 1px solid rgb(2, 86, 2);
-  }
-}
-header {
-  background: $base-color;
-  display: flex;
-  justify-content: space-evenly;
-  padding: 8px;
-  & > div {
+  margin: 0px;
+  background: $base-color-lightest;
+
+  header {
+    letter-spacing: 1px;
+    background: $base-color-lightest;
     display: flex;
-    justify-content: center;
-    width: 20%;
-    .play2not {
-      color: gray !important;
-      background: rgb(67, 66, 66) !important;
+    justify-content: space-evenly;
+    padding: 0px;
+    h1 {
+      font-size: 36px;
+    }
+    .title {
+      padding: 0px 32px;
+      text-align: center;
+    }
+    .player-status {
+      display: flex;
+      flex-direction: column;
+      justify-content: center !important;
+      align-items: center;
+      padding: 2px 8px;
+      text-align: center;
+      &.play2not {
+        color: rgb(120, 91, 91);
+      }
+
+      .signal {
+        content: "";
+        background: $base-color-light;
+        width: 1rem;
+        height: 1rem;
+        border: 1px solid $base-color-medium-light;
+        border-radius: 50%;
+        box-shadow: 0px 0px 3px 3px rgb(100, 50, 50);
+        &.active {
+          box-shadow: 0px 0px 3px 3px rgb(58, 96, 32);
+        }
+      }
+      
     }
   }
 }
+
 .initial {
-  background: $base-color;
+  background: $base-color-light;
   padding: 16px;
   position: absolute;
   right: 50%;
@@ -86,6 +108,7 @@ header {
     }
   }
   & > div {
+    background: $base-color-dark;
     padding: 0.4rem;
     flex-direction: column;
     margin: 8px;
@@ -96,16 +119,15 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.20);
+    box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.2);
     & > * {
       text-align: center;
       margin: 8px;
       font-size: 1.5rem;
     }
     & p {
-       font-size: 1rem;
-     }
-    
+      font-size: 1rem;
+    }
     &:hover {
       background: $base-color-medium-light;
       transition: 0.35ms;
@@ -123,43 +145,46 @@ header {
   }
 }
 main {
-  margin: auto;
-  padding-top: 2rem;
+  padding-top: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
   padding-bottom: 16px;
   .game-container {
-    margin: 16px;
-    padding: 0;
+    
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 0.9fr);
+    grid-template-rows: repeat(3, 0.9fr);
     background: $grid;
-    width: 90vh;
-    height: 90vh;
-    max-height: 90vw;
-    border: 1px solid black;
+
+    box-sizing: border-box;
+    max-width: 100%;
+    height: calc(70vh - 16px);
+    max-height: 50vw;
+    overflow: auto;
+
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: 8px;
+    aspect-ratio: 1/1;
 
-    & > div {
-      margin: 0px;
+    .square {
+      background: $base-color-light;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 6rem;
-      color: rgb(188, 191, 194);
-      min-width: 50px;
-      min-height: 50px;
-      max-width: 400px;
-      max-height: 400px;
-      aspect-ratio: 1/1;
+      font-size: 5rem;
+      text-align: center;
+      color: $base-color-darkest;
+      height: 100%;
+      width: 100%;
 
-      &.checked {
-        background: black;
+      min-width: 20px;
+      min-height: 20px;
+      aspect-ratio: 1/1;
+      svg {
+        height: 90%;
       }
       &:hover {
         background: $base-color;
@@ -183,6 +208,20 @@ footer {
 
 @media only screen and (max-width: 800px) {
   body {
+    .game-container {
+      
+    box-sizing: border-box;
+    max-width: 100%;
+    height: calc(92vh - 16px);
+    max-height: 90vw;
+    overflow: auto;
+    
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    aspect-ratio: 1/1;
+    }
     .initial {
       flex-direction: column;
       padding: 0px;
