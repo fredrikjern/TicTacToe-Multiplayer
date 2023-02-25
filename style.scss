@@ -42,12 +42,14 @@ body {
       .signal {
         content: "";
         background: $base-color-light;
-        width: 1rem;
-        height: 1rem;
+        width: 1.5rem;
+        height: 1.5rem;
         border: 1px solid $base-color-medium-light;
         border-radius: 50%;
         box-shadow: 0px 0px 3px 3px rgb(100, 50, 50);
+        transition: 0.4ms;
         &.active {
+          transform: scale(1.2);
           box-shadow: 0px 0px 3px 3px rgb(58, 96, 32);
         }
       }

@@ -36,13 +36,15 @@ body header .player-status.play2not {
 body header .player-status .signal {
   content: "";
   background: hsl(130deg, 10%, 75%);
-  width: 1rem;
-  height: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 1px solid hsl(130deg, 10%, 70%);
   border-radius: 50%;
   box-shadow: 0px 0px 3px 3px rgb(100, 50, 50);
+  transition: 0.4ms;
 }
 body header .player-status .signal.active {
+  transform: scale(1.2);
   box-shadow: 0px 0px 3px 3px rgb(58, 96, 32);
 }
 

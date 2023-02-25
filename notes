@@ -1,3 +1,21 @@
+/**
+ * Efter version 0.1
+ * ? Såhär såg min första "datastruktur" ut, var invecklat och svårt att överblicka
+ * men ganska "straight forward" ett problem i taget. Blev rätt många initiala APIanrop vilket
+ * ibland ledde till errors, 1 anrop för att skapa listan sen 9 för att skapa varje objekt.
+ * Tänkte att jag lika gärna flytta upp allt till listan och ha en property med en array för brädet:
+ *  [0,0,1,2,0,0,0,0,0], 9 värden i arrayen en för varje ruta och siffran representerar:
+ *  0 = ingen har markerat rutan
+ *  1 = Spelare 1 har markerat rutan
+ *  2 = Spelare 2 har markerat rutan
+ *
+ *
+ *  Efter version 0.2:
+ *  För att undvika att behöva ladda ner hela första listan för att söka efter spel ID:t,
+ *  så funderar jag på om inte det bästa vore att skapa en "Huvudlista", ett object
+ *  med en property med en array med objekt där varje objekt är ett "spel"
+ *
+ */
 let data = {
   id: "201002fkfk",
   listname: "GameBoard-1",
