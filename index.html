@@ -13,17 +13,16 @@
 <body>
     <header>
         <div class="player-status">
-            <h2>Player1</h2>
-            <div></div>
+            <h2>Player 1</h2>
+            <div class="signal active"></div>
         </div>
         <div class="title">
             <h1>Tic tac toe</h1>
             <h2 class="showID">ID</h2>
         </div>
-        <div>
-        <div class="player-status play2not">
+        <div class="player-status p2 play2not">
             <h2>Player 2</h2>
-            <div></div>
+            <div class="signal"></div>
         </div>      
     </header>
     <main> 
@@ -31,8 +30,11 @@
             <div class="square square-0"></div>
             <div class="square square-1"></div>
             <div class="square square-2"></div>
-            <div class="square square-3"></div>
-            <div class="square square-4"></div>
+            <div class="square square-3">
+        </div>
+            <div class="square square-4">
+             
+        </div>
             <div class="square square-5"></div>
             <div class="square square-6"></div>
             <div class="square square-7"></div>
@@ -46,7 +48,7 @@
         </div>
         <div class="join">
             <h3>
-                Join a game with code:
+                Enter code:
             </h3>
            <form action="submit" class="join-form">
             <input type="text" class="join-input" placeholder="Game ID" required>

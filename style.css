@@ -6,16 +6,11 @@
 
 body {
   margin: 0px;
-  background: hsl(130deg, 10%, 65%);
-}
-body .red-border {
-  border: 1px solid rgb(150, 35, 6);
-}
-body .green-border {
-  border: 1px solid rgb(2, 86, 2);
+  background: hsl(130deg, 10%, 95%);
 }
 body header {
-  background: hsl(130deg, 10%, 55%);
+  letter-spacing: 1px;
+  background: hsl(130deg, 10%, 95%);
   display: flex;
   justify-content: space-evenly;
   padding: 0px;
@@ -25,28 +20,34 @@ body header h1 {
 }
 body header .title {
   padding: 0px 32px;
+  text-align: center;
 }
 body header .player-status {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly !important;
-  padding: 8px 16px;
+  justify-content: center !important;
+  align-items: center;
+  padding: 2px 8px;
   text-align: center;
 }
-body header .player-status > div {
-  margin: auto;
+body header .player-status.play2not {
+  color: rgb(120, 91, 91);
+}
+body header .player-status .signal {
   content: "";
+  background: hsl(130deg, 10%, 75%);
   width: 1rem;
   height: 1rem;
-  border: 1px solid black;
+  border: 1px solid hsl(130deg, 10%, 70%);
   border-radius: 50%;
+  box-shadow: 0px 0px 3px 3px rgb(100, 50, 50);
 }
-body header .player-status.play2not {
-  color: rgb(195, 19, 19);
+body header .player-status .signal.active {
+  box-shadow: 0px 0px 3px 3px rgb(58, 96, 32);
 }
 
 .initial {
-  background: hsl(130deg, 10%, 55%);
+  background: hsl(130deg, 10%, 75%);
   padding: 16px;
   position: absolute;
   right: 50%;
@@ -94,6 +95,7 @@ body header .player-status.play2not {
   border: 1px solid rgb(54, 75, 54);
 }
 .initial > div {
+  background: hsl(130deg, 10%, 65%);
   padding: 0.4rem;
   flex-direction: column;
   margin: 8px;
@@ -137,16 +139,15 @@ main {
   padding-bottom: 16px;
 }
 main .game-container {
-  padding: 1px;
   display: grid;
   grid-template-columns: repeat(3, 0.9fr);
   grid-template-rows: repeat(3, 0.9fr);
   background: hsl(140deg, 9%, 7%);
+  box-sizing: border-box;
   max-width: 100%;
-  height: 80vh;
-  max-height: 70vw;
-  max-width: 70hw;
-  border: 1px solid black;
+  height: calc(70vh - 16px);
+  max-height: 50vw;
+  overflow: auto;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
@@ -155,14 +156,20 @@ main .game-container {
 }
 main .game-container .square {
   background: hsl(130deg, 10%, 75%);
-  z-index: 1;
-  font-size: 6rem;
-  color: rgb(188, 191, 194);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 5rem;
+  text-align: center;
+  color: hsl(130deg, 10%, 16%);
   height: 100%;
   width: 100%;
   min-width: 20px;
   min-height: 20px;
   aspect-ratio: 1/1;
+}
+main .game-container .square svg {
+  height: 90%;
 }
 main .game-container .square:hover {
   background: hsl(130deg, 10%, 55%);
@@ -175,6 +182,18 @@ footer {
 }
 
 @media only screen and (max-width: 800px) {
+  body .game-container {
+    box-sizing: border-box;
+    max-width: 100%;
+    height: calc(92vh - 16px);
+    max-height: 90vw;
+    overflow: auto;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    aspect-ratio: 1/1;
+  }
   body .initial {
     flex-direction: column;
     padding: 0px;

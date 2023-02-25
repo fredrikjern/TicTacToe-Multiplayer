@@ -1,5 +1,5 @@
 const UPDATE_INTERVAL = 1000;
-const GAME_LIMIT = 20;
+const GAME_LIMIT = 12;
 const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
 let iterations = 0;
 let deleteCurrentGame = document.querySelector(".delete-current-game");
@@ -12,7 +12,9 @@ let startGameBtn = document.querySelector(".start");
 let joinForm = document.querySelector(".join-form");
 let initial = document.querySelector(".initial");
 let p1div = document.querySelector(".p1");
-let p2div = document.querySelector(".p2")
+let p2div = document.querySelector(".p2");
+let signals = document.querySelectorAll(".signal");
+
 let game;
 let lastRenderTime = 0;
 let player1 = null;
@@ -21,45 +23,86 @@ let gameName;
 let gameID;
 let player1turn;
 let board = [];
-let correctArrays = [[0, 1, 2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
-function checkWinner(board,correctArrays) {
+const correctArrays = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+
+async function gameLoop(gameID) {
+  let game = await fetchGame(gameID);
+  board = game.board;
+  gameOver = checkWinner(board, correctArrays);
+
+  if (!gameOver && iterations < GAME_LIMIT) {
+    setTimeout(() => {
+      gameLoop(gameID);
+    }, UPDATE_INTERVAL);
+  } else {
+    console.log("game over!   iterations: " + iterations);
+    setTimeout(() => {
+      deleteGame(gameID);
+    }, 3000);
+    renderBoard(board);
+  }
+
+  renderBoard(board);
+
+  if (game.player2joined) p2div.classList.remove("play2not");
+  if (game.player1turn) {
+    signals[0].classList.add("active");
+    signals[1].classList.remove("active");
+  } else if (!game.player1turn) {
+    signals[1].classList.add("active");
+    signals[0].classList.remove("active");
+  }
+  boardEventListeners(board, game.player1turn, player1, gameID);
+}
+// ---- Färdiga
+//
+function checkWinner(board, correctArrays) {
+  let winner = null;
+  let winningArray = [];
   let p1 = [];
   let p2 = [];
   board.forEach((item, index) => {
     if (item === 1) p1.push(index);
     if (item === 2) p2.push(index);
   });
-
+  [winner, winningArray] = compareArrays(p1, p2, correctArrays);
+  console.log(winner + " " + winningArray);
+  return winner > 0 ? true : false;
 }
-async function gameLoop(gameID) {
-  let game = await fetchGame(gameID);
-  board = game.board;
-  if (game.player2join) {
-    p2.classList.remove("play2not")
-    
-  }
-  let player1turn = game.player1turn;
-  checkWinner(board);
-  renderBoard(board);
-  if (game.player2joined)
-    boardEventListeners(board, player1turn, player1, gameID);
+function compareArrays(arr1, arr2, correctArrays) {
+  let result = null;
+  let winner = 0;
 
-  if (!gameOver && iterations < GAME_LIMIT) {
-    setTimeout(() => {
-      console.log("Kör sig själv igen");
-      iterations++;
-      gameLoop(gameID);
-    }, UPDATE_INTERVAL);
-  } else {
-    console.log("game over!   iterations: " + iterations);
-    deleteGame(gameID);
-    renderBoard(board);
-  }
+  correctArrays.forEach((correctArray) => {
+    const arr1Matches = correctArray.every((val) => arr1.includes(val));
+    const arr2Matches = correctArray.every((val) => arr2.includes(val));
+
+    if (arr1Matches) {
+      result = correctArray;
+      winner = 1;
+      showIdContainer.innerHTML = "Player 1 Wins !";
+      return [winner, result];
+    } else if (arr2Matches) {
+      result = correctArray;
+      winner = 2;
+      showIdContainer.innerHTML = "Player 2 Wins !";
+      return [winner, result];
+    }
+  });
+
+  return [winner, result];
 }
-// ---- Färdiga
-//
 async function player2join(gameID) {
-  return fetch(`${API_BASE}lists/${gameID}`, {
+  await fetch(`${API_BASE}lists/${gameID}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -135,8 +178,12 @@ function renderBoard(board) {
     let square = document.createElement("div");
     //square.innerHTML=`${squareresults}`
     square.classList.add("square");
-    if (squareresults === 1) square.innerHTML = "X";
-    if (squareresults === 2) square.innerHTML = "O";
+    if (squareresults === 1)
+      square.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path class="x" d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/></svg>';
+    if (squareresults === 2)
+      square.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="circle" d="M512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256zM256 48C141.1 48 48 141.1 48 256C48 370.9 141.1 464 256 464C370.9 464 464 370.9 464 256C464 141.1 370.9 48 256 48z"/></svg>';
     gameContainer.appendChild(square);
   });
 }
@@ -185,7 +232,8 @@ async function findGameID(gameName) {
   try {
     let res = await fetch(`${API_BASE}listsearch?listname=${gameName}`);
     let data = await res.json();
-    let g = data[0]._id;
+    let g = await data[0]._id;
+    console.log(g);
     return g;
   } catch (error) {
     console.log(error);
@@ -220,21 +268,19 @@ startGameBtn.addEventListener("click", async function (e) {
   copyToClipboard(gameName);
   gameLoop(gameID);
   initial.classList.add("hidden");
-  p1div.classList.add("green-border");
 });
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  player1 = true;
+  //player1 = true;
   player1 = false;
   let joinInput = document.querySelector(".join-input").value;
-  console.log("Joining game: " + joinInput);
+
   showIdContainer.innerHTML = `${joinInput} (copied to clipboard)`;
   initial.classList.add("hidden");
-  p1div.classList.add("green-border");
   gameID = await findGameID(joinInput);
-  await player2join(gameID);
+  let resp = await player2join(gameID);
+  console.log(resp);
   gameLoop(gameID);
-  console.log(gameID);
 });
 //! ---
 
