@@ -57,7 +57,59 @@ body {
     }
   }
 }
+main {
+  padding-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 16px;
+  .game-container {
+    
+    display: grid;
+    grid-template-columns: repeat(3, 0.9fr);
+    grid-template-rows: repeat(3, 0.9fr);
+    background: $grid;
 
+    box-sizing: border-box;
+    max-width: 100%;
+    height: calc(70vh - 16px);
+    max-height: 50vw;
+    overflow: auto;
+
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    aspect-ratio: 1/1;
+
+    .square {
+      background: $base-color-light;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 5rem;
+      text-align: center;
+      color: $base-color-darkest;
+      height: 100%;
+      width: 100%;
+
+      min-width: 20px;
+      min-height: 20px;
+      aspect-ratio: 1/1;
+      svg {
+        height: 80%;
+      }
+      &:hover {
+        background: $base-color;
+      }
+    }
+  }
+}
+footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 2rem;
+}
 .initial {
   background: $base-color-light;
   padding: 16px;
@@ -146,67 +198,6 @@ body {
     display: none;
   }
 }
-main {
-  padding-top: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 16px;
-  .game-container {
-    
-    display: grid;
-    grid-template-columns: repeat(3, 0.9fr);
-    grid-template-rows: repeat(3, 0.9fr);
-    background: $grid;
-
-    box-sizing: border-box;
-    max-width: 100%;
-    height: calc(70vh - 16px);
-    max-height: 50vw;
-    overflow: auto;
-
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    aspect-ratio: 1/1;
-
-    .square {
-      background: $base-color-light;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 5rem;
-      text-align: center;
-      color: $base-color-darkest;
-      height: 100%;
-      width: 100%;
-
-      min-width: 20px;
-      min-height: 20px;
-      aspect-ratio: 1/1;
-      svg {
-        height: 90%;
-      }
-      &:hover {
-        background: $base-color;
-      }
-    }
-  }
-}
-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem 2rem;
-}
-
-// @media only screen and (min-width: 896px) {
-//   body {
-//     .game-container {
-//       background: red;
-//     }
-//   }
-// }
 
 @media only screen and (max-width: 800px) {
   body {

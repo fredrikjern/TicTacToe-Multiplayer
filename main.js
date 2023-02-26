@@ -1,5 +1,5 @@
 const UPDATE_INTERVAL = 700;
-const GAME_LIMIT = 50;
+const GAME_LIMIT = 100;
 const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
 
 let gameContainer = document.querySelector(".game-container");
@@ -81,7 +81,6 @@ function checkWinner(board, correctArrays) {
 function compareArrays(arr1, arr2, correctArrays) {
   let result = null;
   let winner = 0;
-
   correctArrays.forEach((correctArray) => {
     const arr1Matches = correctArray.every((val) => arr1.includes(val));
     const arr2Matches = correctArray.every((val) => arr2.includes(val));
@@ -89,13 +88,16 @@ function compareArrays(arr1, arr2, correctArrays) {
     if (arr1Matches) {
       result = correctArray;
       winner = 1;
-      showIdContainer.innerHTML = "Player 1 Wins !";
+      showIdContainer.innerHTML = "Player 1 wins!";
       return [winner, result];
     } else if (arr2Matches) {
       result = correctArray;
       winner = 2;
-      showIdContainer.innerHTML = "Player 2 Wins !";
+      showIdContainer.innerHTML = "Player 2 wins!";
       return [winner, result];
+    } else if ((arr1.length + arr2.length) > 8 && !arr1Matches && !arr2Matches) {
+      winner = 3;
+      showIdContainer.innerHTML = "It's a draw!";
     }
   });
 
