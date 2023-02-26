@@ -48,6 +48,56 @@ body header .player-status .signal.active {
   box-shadow: 0px 0px 3px 3px rgb(58, 96, 32);
 }
 
+main {
+  padding-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 16px;
+}
+main .game-container {
+  display: grid;
+  grid-template-columns: repeat(3, 0.9fr);
+  grid-template-rows: repeat(3, 0.9fr);
+  background: hsl(140deg, 9%, 7%);
+  box-sizing: border-box;
+  max-width: 100%;
+  height: calc(70vh - 16px);
+  max-height: 50vw;
+  overflow: auto;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  aspect-ratio: 1/1;
+}
+main .game-container .square {
+  background: hsl(130deg, 10%, 75%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 5rem;
+  text-align: center;
+  color: hsl(130deg, 10%, 16%);
+  height: 100%;
+  width: 100%;
+  min-width: 20px;
+  min-height: 20px;
+  aspect-ratio: 1/1;
+}
+main .game-container .square svg {
+  height: 80%;
+}
+main .game-container .square:hover {
+  background: hsl(130deg, 10%, 55%);
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 2rem;
+}
+
 .initial {
   background: hsl(130deg, 10%, 75%);
   padding: 16px;
@@ -131,56 +181,6 @@ body header .player-status .signal.active {
 }
 .initial.hidden {
   display: none;
-}
-
-main {
-  padding-top: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 16px;
-}
-main .game-container {
-  display: grid;
-  grid-template-columns: repeat(3, 0.9fr);
-  grid-template-rows: repeat(3, 0.9fr);
-  background: hsl(140deg, 9%, 7%);
-  box-sizing: border-box;
-  max-width: 100%;
-  height: calc(70vh - 16px);
-  max-height: 50vw;
-  overflow: auto;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  aspect-ratio: 1/1;
-}
-main .game-container .square {
-  background: hsl(130deg, 10%, 75%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 5rem;
-  text-align: center;
-  color: hsl(130deg, 10%, 16%);
-  height: 100%;
-  width: 100%;
-  min-width: 20px;
-  min-height: 20px;
-  aspect-ratio: 1/1;
-}
-main .game-container .square svg {
-  height: 90%;
-}
-main .game-container .square:hover {
-  background: hsl(130deg, 10%, 55%);
-}
-
-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem 2rem;
 }
 
 @media only screen and (max-width: 800px) {
