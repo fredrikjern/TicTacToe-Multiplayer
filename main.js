@@ -25,6 +25,7 @@ let gameOver = false;
 let player1 = null;
 let iterations = 0;
 let board = [];
+// let gameIsCreated = false;
 
 /** gameLoop()
  * Incursive function, if gameOver = false it sets a timeout to call itself UPDATE_INTERVAL ms later
@@ -95,7 +96,7 @@ function compareArrays(arr1, arr2, correctArrays) {
       winner = 2;
       showIdContainer.innerHTML = "Player 2 wins!";
       return [winner, result];
-    } else if ((arr1.length + arr2.length) > 8 && !arr1Matches && !arr2Matches) {
+    } else if (arr1.length + arr2.length > 8 && !arr1Matches && !arr2Matches) {
       winner = 3;
       showIdContainer.innerHTML = "It's a draw!";
     }
@@ -139,17 +140,18 @@ async function checkSquare(board, player1turn, gameID) {
     console.log(error);
   }
 }
+async function squareClickHandler(event) {
+  event.preventDefault();
+  board[index] = 1; // Uppdatera boarden i rutan som klickas på till 1 (player1) (muterar)
+  renderBoard(board); // Renderar om för att få bort alla eventlisteners, så man inte kan dubbelklicka
+  checkSquare(board, player1turn, gameID); // Skickar en PUT med den muterade boarden, och byter vems tur det är
+}
 function boardEventListeners(board, player1turn, player1, gameID) {
   let squares = document.querySelectorAll(".square");
   squares.forEach((square, index) => {
     if (player1 && player1turn && board[index] === 0) {
       // OM Du är spelare 1 OCH det är spelare 1s tur OCH ingen har checkat den rutan --> Lägg till eventlistener
-      square.addEventListener("click", async (event) => {
-        event.preventDefault();
-        board[index] = 1; // Uppdatera boarden i rutan som klickas på till 1 (player1) (muterar)
-        renderBoard(board); // Renderar om för att få bort alla eventlisteners, så man inte kan dubbelklicka
-        checkSquare(board, player1turn, gameID); // Skickar en PUT med den muterade boarden, och byter vems tur det är
-      });
+      square.addEventListener("click", squareClickHandler);
     }
     if (!player1 && !player1turn && board[index] === 0) {
       square.addEventListener("click", (event) => {
@@ -205,6 +207,7 @@ async function createGame(gameName) {
     });
     const data = await res.json();
     let game_ID = data.list._id;
+
     return game_ID;
   } catch (error) {
     console.log(error);
