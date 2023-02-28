@@ -25,7 +25,9 @@ let gameOver = false;
 let player1 = null;
 let iterations = 0;
 let board = [];
-
+let firstRender = true;
+let ticker = true;
+let oldTurn;
 /** gameLoop()
  * Incursive function, if gameOver = false it sets a timeout to call itself UPDATE_INTERVAL ms later
  * then executes all the game logic and visual changes.
@@ -33,12 +35,23 @@ let board = [];
  */
 async function gameLoop(gameID) {
   let game = await fetchGame(gameID);
+
+  if (!oldTurn === game.player1turn) {
+    firstRender = true;
+    console.log("first render switch: " + firstRender);
+  }
+
   board = game.board;
   gameOver = checkWinner(board, correctArrays);
-  renderBoard(board);
-
+  if (game.player1turn) {
+  }
   if (!gameOver && iterations < GAME_LIMIT) {
-    boardEventListeners(board, game.player1turn, player1, gameID);
+    if (firstRender) {
+      renderBoard(board);
+      boardEventListeners(board, game.player1turn, player1, gameID);
+      firstRender = false;
+      console.log(firstRender);
+    }
     setTimeout(() => {
       gameLoop(gameID);
     }, UPDATE_INTERVAL);
@@ -50,19 +63,41 @@ async function gameLoop(gameID) {
     renderBoard(board);
   }
   if (game.player2joined) p2div.classList.remove("play2not");
-  if (game.player1turn) {
+  //switchSignals(game.player1turn)
+  iterations++;
+  oldTurn = game.player1turn;
+}
+//** Work in progress */
+async function restartGame() {
+  iterations = 0;
+  try {
+    await fetch(`${API_BASE}lists/${gameID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        player1turn: false,
+      }),
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+function switchSignals(player1turn) {
+  if (player1turn) {
     // Stylingen borde in i en egen funktion
     if (!signals[0].classList.contains("active"))
       signals[0].classList.add("active");
     if (signals[1].classList.contains("active"))
       signals[1].classList.remove("active");
-  } else if (!game.player1turn) {
+  } else if (player1turn) {
     if (!signals[1].classList.contains("active"))
       signals[1].classList.add("active");
     if (signals[0].classList.contains("active"))
       signals[0].classList.remove("active");
   }
-  iterations++;
 }
 // ! ----  Functions --------
 function checkWinner(board, correctArrays) {
@@ -95,7 +130,7 @@ function compareArrays(arr1, arr2, correctArrays) {
       winner = 2;
       showIdContainer.innerHTML = "Player 2 wins!";
       return [winner, result];
-    } else if ((arr1.length + arr2.length) > 8 && !arr1Matches && !arr2Matches) {
+    } else if (arr1.length + arr2.length > 8 && !arr1Matches && !arr2Matches) {
       winner = 3;
       showIdContainer.innerHTML = "It's a draw!";
     }
@@ -149,6 +184,7 @@ function boardEventListeners(board, player1turn, player1, gameID) {
         board[index] = 1; // Uppdatera boarden i rutan som klickas på till 1 (player1) (muterar)
         renderBoard(board); // Renderar om för att få bort alla eventlisteners, så man inte kan dubbelklicka
         checkSquare(board, player1turn, gameID); // Skickar en PUT med den muterade boarden, och byter vems tur det är
+        firstRender = true;
       });
     }
     if (!player1 && !player1turn && board[index] === 0) {
@@ -156,7 +192,8 @@ function boardEventListeners(board, player1turn, player1, gameID) {
         event.preventDefault();
         board[index] = 2;
         renderBoard(board);
-        checkSquare(board, player1turn, gameID);
+        checkSquare(board, player1turn, gameID); // Skickar en PUT med den muterade boarden, och byter vems tur det är
+        firstRender = true;
       });
     }
   });
@@ -201,6 +238,8 @@ async function createGame(gameName) {
         board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         player1turn: false,
         player2joined: false,
+        restart1: false,
+        restart2: false,
       }),
     });
     const data = await res.json();
