@@ -41,10 +41,20 @@
     <footer>
         © Fredrik Jernberg 2023
     </footer>
+    <div class="restart hidden">
+        <div>
+            <button type="click" id="restart-button">Restart!</button>
+            <button type="click" id="delete-button">Delete game</button>
+        </div>
+    </div>
     <div class="initial">
         <div class="start">
-            <h3>Start new game</h3>
-            <p>Gamecode will be copied to clipboard</p>
+            <form action="submit">
+                <button type="submit" onsubmit="myButton.disabled = true; return true;">
+                    Start new game
+                </button>
+                <p>Gamecode will be copied to clipboard</p>
+            </form>
         </div>
         <div class="join">
             <h3>
