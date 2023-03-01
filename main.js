@@ -8,6 +8,7 @@ let startGameBtn = document.querySelector(".start");
 let joinForm = document.querySelector(".join-form");
 let signals = document.querySelectorAll(".signal");
 let initial = document.querySelector(".initial");
+let restart = document.querySelector(".restart");
 let p1div = document.querySelector(".p1");
 let p2div = document.querySelector(".p2");
 
@@ -21,50 +22,108 @@ const correctArrays = [
   [0, 4, 8], //Diagonaler
   [2, 4, 6],
 ];
+let gameID;
 let gameOver = false;
 let player1 = null;
 let iterations = 0;
 let board = [];
-
+let firstRender = true;
+let ticker = true;
+let oldTurn;
+let oldGameNumber = 0;
 /** gameLoop()
  * Incursive function, if gameOver = false it sets a timeout to call itself UPDATE_INTERVAL ms later
  * then executes all the game logic and visual changes.
  * @param {* String , the database ID} gameID
  */
 async function gameLoop(gameID) {
+  // Gets the current game data (board, player1turn, player2joined)
   let game = await fetchGame(gameID);
+  // If the turn has changed since last update a new render is required.
+  if (!oldTurn === game.player1turn) firstRender = true;
+  // This is probably not necessary, can't decided if its more or less readable?
   board = game.board;
-  gameOver = checkWinner(board, correctArrays);
-  renderBoard(board);
-
+  gameOver = checkWinner(game.board, correctArrays); // Returns true if someones won.
+  // IF no one has won and the iteration limit is not reached
   if (!gameOver && iterations < GAME_LIMIT) {
-    boardEventListeners(board, game.player1turn, player1, gameID);
+    if (firstRender) {
+      renderBoard(board);
+      boardEventListeners(board, game.player1turn, player1, gameID);
+      firstRender = false;
+    }
     setTimeout(() => {
       gameLoop(gameID);
     }, UPDATE_INTERVAL);
-  } else {
+  } else if (gameOver) {
     console.log("game over! iterations: " + iterations);
-    setTimeout(() => {
-      deleteGame(gameID);
-    }, 2000);
-    renderBoard(board);
+    if (player1) {
+      setTimeout(() => {
+        checkForRestart(gameID,oldGameNumber);
+      }, 2000)
+    } else if (!player1) restart.classList.remove("hidden");
+    renderBoard(board); // Re-draws the board to "remove" eventListeners.
   }
+
   if (game.player2joined) p2div.classList.remove("play2not");
-  if (game.player1turn) {
-    // Stylingen borde in i en egen funktion
+  switchSignals(game.player1turn);
+
+  iterations++;
+  oldTurn = game.player1turn;
+  oldGameNumber = game.gameNumber;
+
+}
+//** Work in progress */
+// ! ----  Functions --------
+async function checkForRestart(gameID, oldGameNumber) {
+  console.log("väntar på restart");
+  let game = await fetchGame(gameID);
+  if (game.gameNumber === oldGameNumber) {
+    setTimeout(() => {
+      console.log("timeout");
+      checkForRestart(gameID,oldGameNumber);
+    }, 500);
+  } else if (game.gameNumber > oldGameNumber) { 
+    console.log("större");
+    showIdContainer.innerHTML="Winner winner chicken dinner"
+    gameOver = false;
+    gameLoop(gameID)
+  }
+}
+async function restartGame(gameNumber, gameID) {
+  gameOver = false;
+  iterations = 0;
+  gameNumber++;
+  showIdContainer.innerHTML="Winner winner chicken dinner"
+  try {
+    await fetch(`${API_BASE}lists/${gameID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        player1turn: false,
+        gameNumber: gameNumber,
+      }),
+    });
+    await gameLoop(gameID);
+  } catch (error) {
+    console.log(error);
+  }
+}
+function switchSignals(player1turn) {
+  if (player1turn) {
     if (!signals[0].classList.contains("active"))
       signals[0].classList.add("active");
     if (signals[1].classList.contains("active"))
       signals[1].classList.remove("active");
-  } else if (!game.player1turn) {
+  } else if (!player1turn) {
     if (!signals[1].classList.contains("active"))
       signals[1].classList.add("active");
     if (signals[0].classList.contains("active"))
       signals[0].classList.remove("active");
   }
-  iterations++;
 }
-// ! ----  Functions --------
 function checkWinner(board, correctArrays) {
   let winner = null;
   let winningArray = [];
@@ -95,7 +154,7 @@ function compareArrays(arr1, arr2, correctArrays) {
       winner = 2;
       showIdContainer.innerHTML = "Player 2 wins!";
       return [winner, result];
-    } else if ((arr1.length + arr2.length) > 8 && !arr1Matches && !arr2Matches) {
+    } else if (arr1.length + arr2.length > 8 && !arr1Matches && !arr2Matches) {
       winner = 3;
       showIdContainer.innerHTML = "It's a draw!";
     }
@@ -149,6 +208,7 @@ function boardEventListeners(board, player1turn, player1, gameID) {
         board[index] = 1; // Uppdatera boarden i rutan som klickas på till 1 (player1) (muterar)
         renderBoard(board); // Renderar om för att få bort alla eventlisteners, så man inte kan dubbelklicka
         checkSquare(board, player1turn, gameID); // Skickar en PUT med den muterade boarden, och byter vems tur det är
+        firstRender = true;
       });
     }
     if (!player1 && !player1turn && board[index] === 0) {
@@ -156,7 +216,8 @@ function boardEventListeners(board, player1turn, player1, gameID) {
         event.preventDefault();
         board[index] = 2;
         renderBoard(board);
-        checkSquare(board, player1turn, gameID);
+        checkSquare(board, player1turn, gameID); // Skickar en PUT med den muterade boarden, och byter vems tur det är
+        firstRender = true;
       });
     }
   });
@@ -201,6 +262,7 @@ async function createGame(gameName) {
         board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         player1turn: false,
         player2joined: false,
+        gameNumber: 1,
       }),
     });
     const data = await res.json();
@@ -249,25 +311,47 @@ function randomNumberStr() {
   let random6 = Math.floor(Math.random() * 9) + 1;
   return `${random1}${random2}${random3}${random4}${random5}${random6}`;
 }
-//! Eventlisteners
+//! Eventlistener
+let startClick = false; // preventing double clicks
 startGameBtn.addEventListener("click", async function (e) {
   e.preventDefault();
-  player1 = true;
-  let gameName = randomNumberStr();
-  let gameID = await createGame(gameName);
-  showIdContainer.innerHTML = `${gameName} (copied to clipboard)`;
-  copyToClipboard(gameName);
-  gameLoop(gameID);
-  initial.classList.add("hidden");
+  if (!startClick) {
+    startClick = true;
+    player1 = true;
+    let gameName = randomNumberStr();
+    gameID = await createGame(gameName);
+    showIdContainer.innerHTML = `${gameName} (copied to clipboard)`;
+    copyToClipboard(gameName);
+    gameLoop(gameID);
+    initial.classList.add("hidden");
+  } else if (startClick) console.log("Du har redan klickat!");
 });
+let joinClick = false;
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (!joinClick) {
+    joinClick = true;
+    player1 = false;
+    let joinInput = document.querySelector(".join-input").value;
+    showIdContainer.innerHTML = `${joinInput} (copied to clipboard)`;
+    initial.classList.add("hidden");
+    gameID = await findGameID(joinInput);
+    await player2join(gameID);
+    gameLoop(gameID);
+  }
   //player1 = true;
-  player1 = false;
-  let joinInput = document.querySelector(".join-input").value;
-  showIdContainer.innerHTML = `${joinInput} (copied to clipboard)`;
-  initial.classList.add("hidden");
-  let gameID = await findGameID(joinInput);
-  await player2join(gameID);
-  gameLoop(gameID);
 });
+
+let restartButton = document.getElementById("restart-button");
+restartButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  restartGame(oldGameNumber, gameID)
+  restart.classList.add("hidden")
+});
+
+let deleteButton=document.getElementById("delete-button")
+deleteButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  deleteGame(gameID)
+});
+
