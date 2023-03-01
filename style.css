@@ -2,15 +2,16 @@
   padding: 0;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 16px;
+  letter-spacing: 1px;
 }
 
 body {
   margin: 0px;
-  background: hsl(130deg, 10%, 95%);
+  background: hsl(130, 10%, 95%);
 }
 body header {
   letter-spacing: 1px;
-  background: hsl(130deg, 10%, 95%);
+  background: hsl(130, 10%, 95%);
   display: flex;
   justify-content: space-evenly;
   padding: 0px;
@@ -35,10 +36,10 @@ body header .player-status.play2not {
 }
 body header .player-status .signal {
   content: "";
-  background: hsl(130deg, 10%, 75%);
+  background: hsl(130, 10%, 75%);
   width: 1.5rem;
   height: 1.5rem;
-  border: 1px solid hsl(130deg, 10%, 70%);
+  border: 1px solid hsl(130, 10%, 70%);
   border-radius: 50%;
   box-shadow: 0px 0px 3px 3px rgb(100, 50, 50);
   transition: 0.4ms;
@@ -59,10 +60,10 @@ main .game-container {
   display: grid;
   grid-template-columns: repeat(3, 0.9fr);
   grid-template-rows: repeat(3, 0.9fr);
-  background: hsl(140deg, 9%, 7%);
+  background: hsl(140, 9%, 7%);
   box-sizing: border-box;
-  max-width: 100%;
-  height: calc(70vh - 16px);
+  max-width: 90%;
+  height: calc(60vh - 16px);
   max-height: 50vw;
   overflow: auto;
   flex-wrap: wrap;
@@ -72,13 +73,13 @@ main .game-container {
   aspect-ratio: 1/1;
 }
 main .game-container .square {
-  background: hsl(130deg, 10%, 75%);
+  background: hsl(130, 10%, 75%);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 5rem;
   text-align: center;
-  color: hsl(130deg, 10%, 16%);
+  color: hsl(130, 10%, 16%);
   height: 100%;
   width: 100%;
   min-width: 20px;
@@ -89,7 +90,7 @@ main .game-container .square svg {
   height: 80%;
 }
 main .game-container .square:hover {
-  background: hsl(130deg, 10%, 55%);
+  background: hsl(130, 10%, 55%);
 }
 
 footer {
@@ -99,7 +100,7 @@ footer {
 }
 
 .initial {
-  background: hsl(130deg, 10%, 75%);
+  background: hsl(130, 10%, 75%);
   padding: 16px;
   position: absolute;
   right: 50%;
@@ -112,9 +113,6 @@ footer {
   width: 100%;
   padding: 32px;
   transform: translate(50%, -50%);
-}
-.initial h3 {
-  letter-spacing: 1.5px;
 }
 .initial form button {
   letter-spacing: 1px;
@@ -131,10 +129,9 @@ footer {
 }
 .initial form button:hover {
   transform: scale(1.03);
-  background: hsl(130deg, 10%, 75%);
 }
 .initial form input {
-  background: hsl(130deg, 10%, 75%);
+  background: hsl(130, 10%, 75%);
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -147,7 +144,7 @@ footer {
   border: 1px solid rgb(54, 75, 54);
 }
 .initial > div {
-  background: hsl(130deg, 10%, 65%);
+  background: hsl(130, 10%, 65%);
   padding: 0.4rem;
   flex-direction: column;
   margin: 8px;
@@ -169,7 +166,7 @@ footer {
   font-size: 1rem;
 }
 .initial > div:hover {
-  background: hsl(130deg, 10%, 70%);
+  background: hsl(130, 10%, 70%);
   transition: 0.35ms;
   transform: scale(1.01);
   box-shadow: 4px 5px 5px 0px rgba(0, 0, 0, 0.25);
@@ -177,9 +174,40 @@ footer {
 .initial > div:hover h3,
 .initial > div:hover p,
 .initial > div:hover form {
-  background: hsl(130deg, 10%, 70%);
+  background: hsl(130, 10%, 70%);
 }
 .initial.hidden {
+  display: none;
+}
+
+.restart {
+  position: absolute;
+  top: 0%;
+  background: rgba(171, 186, 173, 0.5);
+  width: 100%;
+  height: 20%;
+  max-height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.restart div {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.restart div button {
+  width: 264px;
+  height: 70%;
+  border: 1px solid hsl(130, 10%, 70%);
+  font-size: 3rem;
+  background-color: hsl(130, 10%, 75%);
+}
+.restart div button:hover {
+  background: hsl(130, 10%, 95%);
+}
+.restart.hidden {
   display: none;
 }
 
