@@ -1,5 +1,5 @@
-const UPDATE_INTERVAL = 700;
 const GAME_LIMIT = 100;
+const UPDATE_INTERVAL = 700;
 const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
 
 let gameContainer = document.querySelector(".game-container");
@@ -74,16 +74,14 @@ async function gameLoop(gameID) {
 //** Work in progress */
 // ! ----  Functions --------
 async function checkForRestart(gameID, oldGameNumber) {
-  console.log("väntar på restart");
   let game = await fetchGame(gameID);
   if (game.gameNumber === oldGameNumber) {
     setTimeout(() => {
-      console.log("timeout");
       checkForRestart(gameID,oldGameNumber);
     }, 500);
   } else if (game.gameNumber > oldGameNumber) { 
-    console.log("större");
-    showIdContainer.innerHTML="Winner winner chicken dinner"
+    showIdContainer.innerHTML = "Winner winner chicken dinner"
+    // Resets and restarts
     gameOver = false;
     gameLoop(gameID)
   }
@@ -110,6 +108,8 @@ async function restartGame(gameNumber, gameID) {
     console.log(error);
   }
 }
+// Gör vad den ska men skrevs om onödigt invecklat för att lösa en bugg. Buggen berodde
+// på något annat men koden fick leva kvar såhär. Ligger i backloggen..
 function switchSignals(player1turn) {
   if (player1turn) {
     if (!signals[0].classList.contains("active"))
@@ -128,6 +128,7 @@ function checkWinner(board, correctArrays) {
   let winningArray = [];
   let p1 = [];
   let p2 = [];
+  // Creates answer-arrays for each player, which are then compared to the correctArrays.
   board.forEach((item, index) => {
     if (item === 1) p1.push(index);
     if (item === 2) p2.push(index);
@@ -139,6 +140,8 @@ function checkWinner(board, correctArrays) {
 function compareArrays(arr1, arr2, correctArrays) {
   let result = null;
   let winner = 0;
+  // Lite av en brute-force lösning, går nog att korta ner.. 
+  // Borde nog lägga logiken för vad som händer visuellt vid vinst / oavgjort i en egen funktion
   correctArrays.forEach((correctArray) => {
     const arr1Matches = correctArray.every((val) => arr1.includes(val));
     const arr2Matches = correctArray.every((val) => arr2.includes(val));
@@ -174,11 +177,10 @@ async function player2join(gameID) {
   });
 }
 /** checkSquare
- *  checkSquare sends the updated board
+ *  checkSquare sends the updated board to the API
  * @param {* Array - Current gameboard} board
  * @param {* Boolean - Who just played} player1turn
  * @param {* String - databaseID} gameID
- * @returns
  */
 async function checkSquare(board, player1turn, gameID) {
   try {
@@ -197,6 +199,7 @@ async function checkSquare(board, player1turn, gameID) {
     console.log(error);
   }
 }
+// Loops out the eventlisteners on the empty squares
 function boardEventListeners(board, player1turn, player1, gameID) {
   let squares = document.querySelectorAll(".square");
   squares.forEach((square, index) => {
@@ -255,7 +258,7 @@ async function createGame(gameName) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      }, //* Ändra player1turn till false, ändras när p2 joinar
+      },
       body: JSON.stringify({
         listname: gameName,
         board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -326,6 +329,7 @@ startGameBtn.addEventListener("click", async function (e) {
     initial.classList.add("hidden");
   } else if (startClick) console.log("Du har redan klickat!");
 });
+
 let joinClick = false;
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -339,7 +343,6 @@ joinForm.addEventListener("submit", async (event) => {
     await player2join(gameID);
     gameLoop(gameID);
   }
-  //player1 = true;
 });
 
 let restartButton = document.getElementById("restart-button");
@@ -354,4 +357,3 @@ deleteButton.addEventListener('click', (event) => {
   event.preventDefault();
   deleteGame(gameID)
 });
-
