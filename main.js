@@ -42,7 +42,8 @@ async function gameLoop(gameID) {
   if (!oldTurn === game.player1turn) firstRender = true;
   // This is probably not necessary, can't decided if its more or less readable?
   board = game.board;
-  gameOver = checkWinner(game.board, correctArrays); // Returns true if someones won.
+  // Returns true if someones won.
+  gameOver = checkWinner(game.board, correctArrays);
   // IF no one has won and the iteration limit is not reached
   if (!gameOver && iterations < GAME_LIMIT) {
     if (firstRender) {
@@ -54,22 +55,21 @@ async function gameLoop(gameID) {
       gameLoop(gameID);
     }, UPDATE_INTERVAL);
   } else if (gameOver) {
-    console.log("game over! iterations: " + iterations);
+    console.log("Game over! Iterations: " + iterations);
     if (player1) {
       setTimeout(() => {
-        checkForRestart(gameID,oldGameNumber);
-      }, 2000)
+        checkForRestart(gameID, oldGameNumber);
+      }, 2000);
     } else if (!player1) restart.classList.remove("hidden");
-    renderBoard(board); // Re-draws the board to "remove" eventListeners.
+    renderBoard(board); // Re-draws the board to "remove" eventListeners but render latest board
   }
-
+  // Visual changes
   if (game.player2joined) p2div.classList.remove("play2not");
   switchSignals(game.player1turn);
 
   iterations++;
   oldTurn = game.player1turn;
   oldGameNumber = game.gameNumber;
-
 }
 //** Work in progress */
 // ! ----  Functions --------
@@ -134,14 +134,14 @@ function checkWinner(board, correctArrays) {
     if (item === 2) p2.push(index);
   });
   [winner, winningArray] = compareArrays(p1, p2, correctArrays);
-  console.log(winner + " " + winningArray);
+  if (winner>0)console.log(winner + " " + winningArray);
   return winner > 0 ? true : false;
 }
 function compareArrays(arr1, arr2, correctArrays) {
   let result = null;
   let winner = 0;
-  // Lite av en brute-force lösning, går nog att korta ner.. 
-  // Borde nog lägga logiken för vad som händer visuellt vid vinst / oavgjort i en egen funktion
+  // Lite av en brute-force lösning, går nog att korta ner en del.. 
+  // Ska lägga logiken för vad som händer visuellt vid vinst / oavgjort i en egen funktion
   correctArrays.forEach((correctArray) => {
     const arr1Matches = correctArray.every((val) => arr1.includes(val));
     const arr2Matches = correctArray.every((val) => arr2.includes(val));
