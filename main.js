@@ -28,7 +28,6 @@ let player1 = null;
 let iterations = 0;
 let board = [];
 let firstRender = true;
-let ticker = true;
 let oldTurn;
 let oldGameNumber = 0;
 /** gameLoop()
@@ -183,7 +182,7 @@ async function player2join(gameID) {
  */
 async function checkSquare(board, player1turn, gameID) {
   try {
-    let turn = player1turn ? false : true;
+    let turn = player1turn ? false : true; // Changes the turn and sends it to the API
     await fetch(`${API_BASE}lists/${gameID}`, {
       method: "PUT",
       headers: {
@@ -303,6 +302,7 @@ function copyToClipboard(copyText) {
     });
 }
 function randomNumberStr() {
+  // Should be a 1 line return... but it works
   let random1 = Math.floor(Math.random() * 9) + 1;
   let random2 = Math.floor(Math.random() * 9) + 1;
   let random3 = Math.floor(Math.random() * 9) + 1;
@@ -317,7 +317,7 @@ startGameBtn.addEventListener("click", async function (e) {
   e.preventDefault();
   if (!startClick) {
     startClick = true;
-    player1 = true;
+    player1 = true; // The player starting the game becomes player 1
     let gameName = randomNumberStr();
     gameID = await createGame(gameName);
     showIdContainer.innerHTML = `${gameName} (copied to clipboard)`;
