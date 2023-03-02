@@ -145,7 +145,8 @@ function compareArrays(arr1, arr2, correctArrays) {
   correctArrays.forEach((correctArray) => {
     const arr1Matches = correctArray.every((val) => arr1.includes(val));
     const arr2Matches = correctArray.every((val) => arr2.includes(val));
-
+    console.log(arr1Matches+" arr1");
+    console.log(arr2Matches+" arr2");
     if (arr1Matches) {
       result = correctArray;
       winner = 1;
@@ -157,6 +158,7 @@ function compareArrays(arr1, arr2, correctArrays) {
       showIdContainer.innerHTML = "Player 2 wins!";
       return [winner, result];
     } else if (arr1.length + arr2.length > 8 && !arr1Matches && !arr2Matches) {
+      console.log("draw");
       winner = 3;
       showIdContainer.innerHTML = "It's a draw!";
     }
