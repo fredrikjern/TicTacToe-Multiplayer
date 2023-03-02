@@ -4,6 +4,8 @@ Sideproject, building a browser TicTacToe game with Javascript, CSS and HTML usi
 
 
 Notes:
+1) checkWinner() doesnt work properly.
+
 1) Player 2 can now restart the game, cleaned the code and tried to comment the complicated parts
 
 1) New version up in main, added some styling and a function to check if there is a winner. Next step is a checkDraw() function and a restartGame() .
