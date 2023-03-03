@@ -1,5 +1,5 @@
-const UPDATE_INTERVAL = 700;
 const GAME_LIMIT = 100;
+const UPDATE_INTERVAL = 700;
 const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
 
 let gameContainer = document.querySelector(".game-container");
@@ -26,9 +26,9 @@ let gameID;
 let gameOver = false;
 let player1 = null;
 let iterations = 0;
+let riterations = 0;
 let board = [];
 let firstRender = true;
-let ticker = true;
 let oldTurn;
 let oldGameNumber = 0;
 /** gameLoop()
@@ -43,7 +43,8 @@ async function gameLoop(gameID) {
   if (!oldTurn === game.player1turn) firstRender = true;
   // This is probably not necessary, can't decided if its more or less readable?
   board = game.board;
-  gameOver = checkWinner(game.board, correctArrays); // Returns true if someones won.
+  // Returns true if someones won.
+  gameOver = checkWinner(game.board, correctArrays);
   // IF no one has won and the iteration limit is not reached
   if (!gameOver && iterations < GAME_LIMIT) {
     if (firstRender) {
@@ -55,45 +56,48 @@ async function gameLoop(gameID) {
       gameLoop(gameID);
     }, UPDATE_INTERVAL);
   } else if (gameOver) {
-    console.log("game over! iterations: " + iterations);
+    console.log("Game over! Iterations: " + iterations);
     if (player1) {
       setTimeout(() => {
-        checkForRestart(gameID,oldGameNumber);
-      }, 2000)
+        checkForRestart(gameID, oldGameNumber);
+      }, 2000);
     } else if (!player1) restart.classList.remove("hidden");
-    renderBoard(board); // Re-draws the board to "remove" eventListeners.
+    renderBoard(board); // Re-draws the board to "remove" eventListeners but render latest board
   }
-
+  // Visual changes
   if (game.player2joined) p2div.classList.remove("play2not");
   switchSignals(game.player1turn);
 
   iterations++;
   oldTurn = game.player1turn;
   oldGameNumber = game.gameNumber;
-
 }
 //** Work in progress */
 // ! ----  Functions --------
 async function checkForRestart(gameID, oldGameNumber) {
-  console.log("väntar på restart");
   let game = await fetchGame(gameID);
   if (game.gameNumber === oldGameNumber) {
-    setTimeout(() => {
-      console.log("timeout");
-      checkForRestart(gameID,oldGameNumber);
-    }, 500);
-  } else if (game.gameNumber > oldGameNumber) { 
-    console.log("större");
-    showIdContainer.innerHTML="Winner winner chicken dinner"
+    if (riterations < GAME_LIMIT) {
+      riterations++;
+      console.log(riterations);
+      setTimeout(() => {
+        checkForRestart(gameID, oldGameNumber);
+      }, 500);
+    } else {
+      deleteGame(gameID);
+    }
+  } else if (game.gameNumber > oldGameNumber) {
+    showIdContainer.innerHTML = "Winner winner chicken dinner";
+    // Resets and restarts
     gameOver = false;
-    gameLoop(gameID)
+    gameLoop(gameID);
   }
 }
 async function restartGame(gameNumber, gameID) {
   gameOver = false;
   iterations = 0;
   gameNumber++;
-  showIdContainer.innerHTML="Winner winner chicken dinner"
+  showIdContainer.innerHTML = "Winner winner chicken dinner";
   try {
     await fetch(`${API_BASE}lists/${gameID}`, {
       method: "PUT",
@@ -111,6 +115,8 @@ async function restartGame(gameNumber, gameID) {
     console.log(error);
   }
 }
+// Gör vad den ska men skrevs om onödigt invecklat för att lösa en bugg. Buggen berodde
+// på något annat men koden fick leva kvar såhär. Ligger i backloggen..
 function switchSignals(player1turn) {
   if (player1turn) {
     if (!signals[0].classList.contains("active"))
@@ -129,39 +135,53 @@ function checkWinner(board, correctArrays) {
   let winningArray = [];
   let p1 = [];
   let p2 = [];
+  // Creates answer-arrays for each player, which are then compared to the correctArrays.
   board.forEach((item, index) => {
     if (item === 1) p1.push(index);
     if (item === 2) p2.push(index);
   });
   [winner, winningArray] = compareArrays(p1, p2, correctArrays);
-  console.log(winner + " " + winningArray);
+  if (winner > 0) { 
+    console.log(winner + " " + winningArray);
+    let squares = document.querySelectorAll(".square");
+    winningArray.forEach(winningSquare => { 
+      squares[winningSquare].style.transform = "scale(1.04)"
+      console.log(winningSquare);
+    })
+  }
   return winner > 0 ? true : false;
 }
 function compareArrays(arr1, arr2, correctArrays) {
-  let result = null;
+  let result = [];
   let winner = 0;
+  let returnValue = [winner, result]; // create variable to store return value
+
   correctArrays.forEach((correctArray) => {
     const arr1Matches = correctArray.every((val) => arr1.includes(val));
     const arr2Matches = correctArray.every((val) => arr2.includes(val));
-
     if (arr1Matches) {
       result = correctArray;
       winner = 1;
       showIdContainer.innerHTML = "Player 1 wins!";
-      return [winner, result];
+      returnValue = [winner, result]; // update return value
     } else if (arr2Matches) {
       result = correctArray;
       winner = 2;
       showIdContainer.innerHTML = "Player 2 wins!";
-      return [winner, result];
-    } else if (arr1.length + arr2.length > 8 && !arr1Matches && !arr2Matches) {
-      winner = 3;
-      showIdContainer.innerHTML = "It's a draw!";
+      returnValue = [winner, result]; // update return value
     }
-  });
 
-  return [winner, result];
+  });
+  if (arr1.length + arr2.length > 8 && winner < 1) {
+    console.log("draw");
+    winner = 3;
+    showIdContainer.innerHTML = "It's a draw!";
+    returnValue = [winner, result]; // update return value
+  }
+  console.log("after loop:  " + returnValue);
+  return returnValue; // return final value
 }
+
 async function player2join(gameID) {
   await fetch(`${API_BASE}lists/${gameID}`, {
     method: "PUT",
@@ -175,15 +195,14 @@ async function player2join(gameID) {
   });
 }
 /** checkSquare
- *  checkSquare sends the updated board
+ *  checkSquare sends the updated board to the API
  * @param {* Array - Current gameboard} board
  * @param {* Boolean - Who just played} player1turn
  * @param {* String - databaseID} gameID
- * @returns
  */
 async function checkSquare(board, player1turn, gameID) {
   try {
-    let turn = player1turn ? false : true;
+    let turn = player1turn ? false : true; // Changes the turn and sends it to the API
     await fetch(`${API_BASE}lists/${gameID}`, {
       method: "PUT",
       headers: {
@@ -198,6 +217,7 @@ async function checkSquare(board, player1turn, gameID) {
     console.log(error);
   }
 }
+// Loops out the eventlisteners on the empty squares
 function boardEventListeners(board, player1turn, player1, gameID) {
   let squares = document.querySelectorAll(".square");
   squares.forEach((square, index) => {
@@ -256,7 +276,7 @@ async function createGame(gameName) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      }, //* Ändra player1turn till false, ändras när p2 joinar
+      },
       body: JSON.stringify({
         listname: gameName,
         board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -303,6 +323,7 @@ function copyToClipboard(copyText) {
     });
 }
 function randomNumberStr() {
+  // Should be a 1 line return... but it works
   let random1 = Math.floor(Math.random() * 9) + 1;
   let random2 = Math.floor(Math.random() * 9) + 1;
   let random3 = Math.floor(Math.random() * 9) + 1;
@@ -317,7 +338,7 @@ startGameBtn.addEventListener("click", async function (e) {
   e.preventDefault();
   if (!startClick) {
     startClick = true;
-    player1 = true;
+    player1 = true; // The player starting the game becomes player 1
     let gameName = randomNumberStr();
     gameID = await createGame(gameName);
     showIdContainer.innerHTML = `${gameName} (copied to clipboard)`;
@@ -326,6 +347,7 @@ startGameBtn.addEventListener("click", async function (e) {
     initial.classList.add("hidden");
   } else if (startClick) console.log("Du har redan klickat!");
 });
+
 let joinClick = false;
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -339,19 +361,17 @@ joinForm.addEventListener("submit", async (event) => {
     await player2join(gameID);
     gameLoop(gameID);
   }
-  //player1 = true;
 });
 
 let restartButton = document.getElementById("restart-button");
 restartButton.addEventListener("click", (event) => {
   event.preventDefault();
-  restartGame(oldGameNumber, gameID)
-  restart.classList.add("hidden")
+  restartGame(oldGameNumber, gameID);
+  restart.classList.add("hidden");
 });
 
-let deleteButton=document.getElementById("delete-button")
-deleteButton.addEventListener('click', (event) => {
+let deleteButton = document.getElementById("delete-button");
+deleteButton.addEventListener("click", (event) => {
   event.preventDefault();
-  deleteGame(gameID)
+  deleteGame(gameID);
 });
-
