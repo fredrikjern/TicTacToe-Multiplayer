@@ -26,6 +26,7 @@ let gameID;
 let gameOver = false;
 let player1 = null;
 let iterations = 0;
+let riterations = 0;
 let board = [];
 let firstRender = true;
 let oldTurn;
@@ -76,21 +77,27 @@ async function gameLoop(gameID) {
 async function checkForRestart(gameID, oldGameNumber) {
   let game = await fetchGame(gameID);
   if (game.gameNumber === oldGameNumber) {
-    setTimeout(() => {
-      checkForRestart(gameID,oldGameNumber);
-    }, 500);
-  } else if (game.gameNumber > oldGameNumber) { 
-    showIdContainer.innerHTML = "Winner winner chicken dinner"
+    if (riterations < GAME_LIMIT) {
+      riterations++;
+      console.log(riterations);
+      setTimeout(() => {
+        checkForRestart(gameID, oldGameNumber);
+      }, 500);
+    } else {
+      deleteGame(gameID);
+    }
+  } else if (game.gameNumber > oldGameNumber) {
+    showIdContainer.innerHTML = "Winner winner chicken dinner";
     // Resets and restarts
     gameOver = false;
-    gameLoop(gameID)
+    gameLoop(gameID);
   }
 }
 async function restartGame(gameNumber, gameID) {
   gameOver = false;
   iterations = 0;
   gameNumber++;
-  showIdContainer.innerHTML="Winner winner chicken dinner"
+  showIdContainer.innerHTML = "Winner winner chicken dinner";
   try {
     await fetch(`${API_BASE}lists/${gameID}`, {
       method: "PUT",
@@ -134,38 +141,47 @@ function checkWinner(board, correctArrays) {
     if (item === 2) p2.push(index);
   });
   [winner, winningArray] = compareArrays(p1, p2, correctArrays);
-  if (winner>0)console.log(winner + " " + winningArray);
+  if (winner > 0) { 
+    console.log(winner + " " + winningArray);
+    let squares = document.querySelectorAll(".square");
+    winningArray.forEach(winningSquare => { 
+      squares[winningSquare].style.transform = "scale(1.04)"
+      console.log(winningSquare);
+    })
+  }
   return winner > 0 ? true : false;
 }
 function compareArrays(arr1, arr2, correctArrays) {
-  let result = null;
+  let result = [];
   let winner = 0;
-  // Lite av en brute-force lösning, går nog att korta ner en del.. 
-  // Ska lägga logiken för vad som händer visuellt vid vinst / oavgjort i en egen funktion
+  let returnValue = [winner, result]; // create variable to store return value
+
   correctArrays.forEach((correctArray) => {
     const arr1Matches = correctArray.every((val) => arr1.includes(val));
     const arr2Matches = correctArray.every((val) => arr2.includes(val));
-    console.log(arr1Matches+" arr1");
-    console.log(arr2Matches+" arr2");
     if (arr1Matches) {
       result = correctArray;
       winner = 1;
       showIdContainer.innerHTML = "Player 1 wins!";
-      return [winner, result];
+      returnValue = [winner, result]; // update return value
     } else if (arr2Matches) {
       result = correctArray;
       winner = 2;
       showIdContainer.innerHTML = "Player 2 wins!";
-      return [winner, result];
-    } else if (arr1.length + arr2.length > 8 && !arr1Matches && !arr2Matches) {
-      console.log("draw");
-      winner = 3;
-      showIdContainer.innerHTML = "It's a draw!";
+      returnValue = [winner, result]; // update return value
     }
-  });
 
-  return [winner, result];
+  });
+  if (arr1.length + arr2.length > 8 && winner < 1) {
+    console.log("draw");
+    winner = 3;
+    showIdContainer.innerHTML = "It's a draw!";
+    returnValue = [winner, result]; // update return value
+  }
+  console.log("after loop:  " + returnValue);
+  return returnValue; // return final value
 }
+
 async function player2join(gameID) {
   await fetch(`${API_BASE}lists/${gameID}`, {
     method: "PUT",
@@ -350,12 +366,12 @@ joinForm.addEventListener("submit", async (event) => {
 let restartButton = document.getElementById("restart-button");
 restartButton.addEventListener("click", (event) => {
   event.preventDefault();
-  restartGame(oldGameNumber, gameID)
-  restart.classList.add("hidden")
+  restartGame(oldGameNumber, gameID);
+  restart.classList.add("hidden");
 });
 
-let deleteButton=document.getElementById("delete-button")
-deleteButton.addEventListener('click', (event) => {
+let deleteButton = document.getElementById("delete-button");
+deleteButton.addEventListener("click", (event) => {
   event.preventDefault();
-  deleteGame(gameID)
+  deleteGame(gameID);
 });
