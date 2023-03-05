@@ -11,36 +11,30 @@
 </head>
 
 <body>
-    <header>
-        <div class="player-status">
-            <h2>Player 1</h2>
-            <div class="signal"></div>
-        </div>
-        <div class="title">
-            <h1>Tic tac toe</h1>
-            <h2 class="showID">ID</h2>
-        </div>
-        <div class="player-status p2 play2not">
-            <h2>Player 2</h2>
-            <div class="signal active"></div>
-        </div>      
-    </header>
-    <main> 
-        <section class="game-container">
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-        </section>
-    </main>
-    <footer>
-        © Fredrik Jernberg 2023
-    </footer>
+    <div class="page-container">
+        <header>
+            <div class="player-status">
+                <h2>Player 1</h2>
+                <div class="signal"></div>
+            </div>
+            <div class="title">
+                <h1>Tic tac toe</h1>
+                <h2 class="showID">ID</h2>
+            </div>
+            <div class="player-status p2 play2not">
+                <h2>Player 2</h2>
+                <div class="signal active"></div>
+            </div>      
+        </header>
+        <main> 
+            <section class="game-container">
+            </section>
+        </main>
+        <footer>
+            © Fredrik Jernberg 2023
+        </footer>
+    </div>
+
     <div class="restart hidden">
         <div>
             <button type="click" id="restart-button">Restart!</button>
@@ -49,12 +43,8 @@
     </div>
     <div class="initial">
         <div class="start">
-            <form action="submit">
-                <button type="submit" onsubmit="myButton.disabled = true; return true;">
-                    Start new game
-                </button>
+                <h2>Start new game</h2> 
                 <p>Gamecode will be copied to clipboard</p>
-            </form>
         </div>
         <div class="join">
             <h3>

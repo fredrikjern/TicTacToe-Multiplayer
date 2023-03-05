@@ -1,5 +1,4 @@
 * {
-  padding: 0;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 16px;
   letter-spacing: 1px;
@@ -7,23 +6,37 @@
 
 body {
   margin: 0px;
+  padding: 0px;
   background: hsl(130, 10%, 95%);
 }
-body header {
+body .page-container {
+  padding: 2rem;
+  height: 100%;
+  background: hsl(130, 10%, 95%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+body .page-container header {
+  width: 100%;
+  min-height: 100px;
+  max-width: 600px;
   letter-spacing: 1px;
   background: hsl(130, 10%, 95%);
   display: flex;
   justify-content: space-evenly;
   padding: 0px;
 }
-body header h1 {
+body .page-container header h1 {
   font-size: 36px;
 }
-body header .title {
-  padding: 0px 32px;
+body .page-container header .title {
+  padding: 0px;
   text-align: center;
 }
-body header .player-status {
+body .page-container header .player-status {
   display: flex;
   flex-direction: column;
   justify-content: center !important;
@@ -31,10 +44,10 @@ body header .player-status {
   padding: 2px 8px;
   text-align: center;
 }
-body header .player-status.play2not {
+body .page-container header .player-status.play2not {
   color: rgb(120, 91, 91);
 }
-body header .player-status .signal {
+body .page-container header .player-status .signal {
   content: "";
   background: hsl(130, 10%, 75%);
   width: 1.5rem;
@@ -44,35 +57,45 @@ body header .player-status .signal {
   box-shadow: 0px 0px 3px 3px rgb(100, 50, 50);
   transition: 0.4ms;
 }
-body header .player-status .signal.active {
+body .page-container header .player-status .signal.active {
   transform: scale(1.2);
   box-shadow: 0px 0px 3px 3px rgb(58, 96, 32);
 }
-
-main {
-  padding-top: 1rem;
+body .page-container header .player-status .signal {
+  content: "";
+  background: hsl(130, 10%, 75%);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid hsl(130, 10%, 70%);
+  border-radius: 50%;
+  box-shadow: 0px 0px 3px 3px rgb(100, 50, 50);
+  transition: 0.4ms;
+}
+body .page-container header .player-status .signal.active {
+  transform: scale(1.2);
+  box-shadow: 0px 0px 3px 3px rgb(58, 96, 32);
+}
+body .page-container main {
+  background: hsl(130, 10%, 75%);
   display: flex;
+  width: 100%;
+  max-width: 600px;
   justify-content: center;
   align-items: center;
-  padding-bottom: 16px;
 }
-main .game-container {
+body .page-container main .game-container {
   display: grid;
   grid-template-columns: repeat(3, 0.9fr);
   grid-template-rows: repeat(3, 0.9fr);
   background: hsl(140, 9%, 7%);
-  box-sizing: border-box;
-  max-width: 90%;
-  height: calc(60vh - 16px);
-  max-height: 50vw;
-  overflow: auto;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  width: 100%;
+  max-width: calc(600px - 1rem);
+  max-height: 600px;
   aspect-ratio: 1/1;
+  overflow: auto;
+  gap: 0.5rem;
 }
-main .game-container .square {
+body .page-container main .game-container .square {
   background: hsl(130, 10%, 75%);
   display: flex;
   justify-content: center;
@@ -86,17 +109,19 @@ main .game-container .square {
   min-height: 20px;
   aspect-ratio: 1/1;
 }
-main .game-container .square svg {
+body .page-container main .game-container .square svg {
   height: 80%;
 }
-main .game-container .square:hover {
+body .page-container main .game-container .square:hover {
   background: hsl(130, 10%, 55%);
 }
-
-footer {
+body .page-container footer {
   display: flex;
+  width: 90%;
   justify-content: flex-end;
   padding: 1rem 2rem;
+  max-width: 600px;
+  max-height: 24px;
 }
 
 .initial {
@@ -211,18 +236,12 @@ footer {
   display: none;
 }
 
-@media only screen and (max-width: 800px) {
-  body .game-container {
-    box-sizing: border-box;
-    max-width: 100%;
-    height: calc(92vh - 16px);
-    max-height: 90vw;
-    overflow: auto;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    aspect-ratio: 1/1;
+@media only screen and (max-width: 650px) {
+  body {
+    padding: 0;
+  }
+  body .page-container {
+    padding: 0px 4px;
   }
   body .initial {
     flex-direction: column;
