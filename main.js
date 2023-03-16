@@ -32,7 +32,7 @@ let firstRender = true;
 let oldTurn;
 let oldGameNumber = 0;
 /** gameLoop()
- * Incursive function, if gameOver = false it sets a timeout to call itself UPDATE_INTERVAL ms later
+ * Async while-loop?, if gameOver = false it sets a timeout to call itself UPDATE_INTERVAL ms later
  * then executes all the game logic and visual changes.
  * @param {* String , the database ID} gameID
  */
