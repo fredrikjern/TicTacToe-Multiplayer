@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   app:
-    container_name: TicTacToe-Multiplayer
-    image: fredrikjern/TicTacToe-Multiplayer:0.0.1
+    container_name: tictactoe-multiplayer
+    image: fredrikjern/tictactoe-multiplayer:0.0.1
     restart: unless-stopped
     build: .
     ports:
