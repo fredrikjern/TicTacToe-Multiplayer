@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("public"));
 
-const client = new MongoClient("mongodb://127.0.0.1:27017");
+const client = new MongoClient(process.env.MONGO_URI);
 await client.connect();
 const db = client.db("itemtracker");
 const listsCollection = db.collection("lists");
