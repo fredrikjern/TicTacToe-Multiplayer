@@ -1,6 +1,6 @@
 const GAME_LIMIT = 100;
 const UPDATE_INTERVAL = 700;
-const API_BASE = "https://nackademin-item-tracker.herokuapp.com/";
+const API_BASE = "http://127.0.0.1:3000";
 
 let gameContainer = document.querySelector(".game-container");
 let showIdContainer = document.querySelector(".showID");
@@ -141,13 +141,13 @@ function checkWinner(board, correctArrays) {
     if (item === 2) p2.push(index);
   });
   [winner, winningArray] = compareArrays(p1, p2, correctArrays);
-  if (winner > 0) { 
+  if (winner > 0) {
     console.log(winner + " " + winningArray);
     let squares = document.querySelectorAll(".square");
-    winningArray.forEach(winningSquare => { 
-      squares[winningSquare].style.transform = "scale(1.04)"
+    winningArray.forEach((winningSquare) => {
+      squares[winningSquare].style.transform = "scale(1.04)";
       console.log(winningSquare);
-    })
+    });
   }
   return winner > 0 ? true : false;
 }
@@ -170,7 +170,6 @@ function compareArrays(arr1, arr2, correctArrays) {
       showIdContainer.innerHTML = "Player 2 wins!";
       returnValue = [winner, result]; // update return value
     }
-
   });
   if (arr1.length + arr2.length > 8 && winner < 1) {
     console.log("draw");
