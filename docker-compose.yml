@@ -11,7 +11,7 @@ services:
     environment:
       - MONGO_URI=mongodb://root:test@db2:27017/
     depends_on:
-      - db
+      - db2
 
   db2:
     container_name: tictactoe-multiplayer-db
