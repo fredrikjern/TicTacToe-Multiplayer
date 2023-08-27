@@ -9,7 +9,7 @@ services:
     ports:
       - "3012:3000"
     environment:
-      - MONGO_URI=mongodb://db:27017
+      - MONGO_URI=mongodb://root:test@db:27017
     depends_on:
       - db
 
@@ -17,6 +17,9 @@ services:
     container_name: db-tictactoe-multiplayer
     image: mongo:6.0
     restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
       - db:/data/db
 
