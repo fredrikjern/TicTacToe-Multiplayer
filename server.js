@@ -47,7 +47,9 @@ app.get("/lists/:id", async (req, res) => {
     return res.status(404).send("List not found, did you use a correct ID?");
   }
 
-  let list = await listsCollection.findOne({ _id: ObjectId(req.params.id) });
+  let list = await listsCollection.findOne({
+    _id: new ObjectId(req.params.id),
+  });
   res.json(list);
 });
 
