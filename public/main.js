@@ -1,6 +1,6 @@
 const GAME_LIMIT = 100;
 const UPDATE_INTERVAL = 700;
-const API_BASE = "https://tictactoe.birgell.se/";
+const API_BASE = "http://127.0.0.1:3000/";
 
 let gameContainer = document.querySelector(".game-container");
 let showIdContainer = document.querySelector(".showID");
