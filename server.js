@@ -96,9 +96,11 @@ app.put("/lists/:id", async (req, res) => {
     return res.status(404).send("List not found, did you use a correct ID?");
   }
 
-  let list = await listsCollection.findOne({ _id: ObjectId(req.params.id) });
+  let list = await listsCollection.findOne({
+    _id: new ObjectId(req.params.id),
+  });
   list = { ...list, ...req.body, itemList: list.itemList };
-  await listsCollection.replaceOne({ _id: ObjectId(req.params.id) }, list);
+  await listsCollection.replaceOne({ _id: new ObjectId(req.params.id) }, list);
 
   res.json({
     success: true,
@@ -111,20 +113,22 @@ app.post("/lists/:id/items", async (req, res) => {
     return res.status(404).send("List not found, did you use a correct ID?");
   }
 
-  let list = await listsCollection.findOne({ _id: ObjectId(req.params.id) });
+  let list = await listsCollection.findOne({
+    _id: new ObjectId(req.params.id),
+  });
 
   if (!list) {
     return res.status(404).send("List not found, did you use a correct ID?");
   }
 
-  const newItem = { _id: ObjectId(), ...req.body };
+  const newItem = { _id: new ObjectId(), ...req.body };
 
   const updatedRecord = await listsCollection.updateOne(
-    { _id: ObjectId(req.params.id) },
+    { _id: new ObjectId(req.params.id) },
     { $push: { itemList: newItem } }
   );
 
-  list = await listsCollection.findOne({ _id: ObjectId(req.params.id) });
+  list = await listsCollection.findOne({ _id: new ObjectId(req.params.id) });
 
   res.json({
     success: true,
@@ -138,7 +142,7 @@ app.delete("/lists/:listid/items/:itemid", async (req, res) => {
   }
 
   let list = await listsCollection.findOne({
-    _id: ObjectId(req.params.listid),
+    _id: new ObjectId(req.params.listid),
   });
 
   if (!list) {
@@ -150,13 +154,15 @@ app.delete("/lists/:listid/items/:itemid", async (req, res) => {
   }
 
   await listsCollection.updateOne(
-    { _id: ObjectId(req.params.listid) },
+    { _id: new ObjectId(req.params.listid) },
     {
-      $pull: { itemList: { _id: ObjectId(req.params.itemid) } },
+      $pull: { itemList: { _id: new ObjectId(req.params.itemid) } },
     }
   );
 
-  list = await listsCollection.findOne({ _id: ObjectId(req.params.listid) });
+  list = await listsCollection.findOne({
+    _id: new ObjectId(req.params.listid),
+  });
 
   res.json({
     success: true,
@@ -170,7 +176,7 @@ app.put("/lists/:listid/items/:itemid", async (req, res) => {
   }
 
   let list = await listsCollection.findOne({
-    _id: ObjectId(req.params.listid),
+    _id: new ObjectId(req.params.listid),
   });
 
   if (!list) {
@@ -193,7 +199,7 @@ app.put("/lists/:listid/items/:itemid", async (req, res) => {
   await listsCollection.updateOne(
     {
       _id: ObjectId(req.params.listid),
-      itemList: { $elemMatch: { _id: ObjectId(req.params.itemid) } },
+      itemList: { $elemMatch: { _id: new ObjectId(req.params.itemid) } },
     },
     {
       $set: {
@@ -202,7 +208,9 @@ app.put("/lists/:listid/items/:itemid", async (req, res) => {
     }
   );
 
-  list = await listsCollection.findOne({ _id: ObjectId(req.params.listid) });
+  list = await listsCollection.findOne({
+    _id: new ObjectId(req.params.listid),
+  });
 
   res.json({
     success: true,
