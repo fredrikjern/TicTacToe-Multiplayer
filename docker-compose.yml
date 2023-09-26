@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    pull_policy: build
+    restart: unless-stopped
+    ports:
+      - "3012:3000"
+    environment:
+      - MONGO_URI=mongodb://root:test@tictactoe_db:27017/
+    depends_on:
+      - tictactoe_db
+
+  tictactoe_db:
+    container_name: tictactoe-multiplayer-db
+    image: mongo:6.0
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - tictactoe_db:/data/db
+
+volumes:
+  tictactoe_db:
